@@ -2,41 +2,34 @@ package net.kcww.app;
 
 import com.vaadin.flow.component.page.AppShellConfigurator;
 import com.vaadin.flow.theme.Theme;
-import javax.sql.DataSource;
-import net.kcww.app.data.service.SamplePersonRepository;
+import lombok.AllArgsConstructor;
+import net.kcww.app.hotel.helper.DatabaseSeeder;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.sql.init.SqlDataSourceScriptDatabaseInitializer;
-import org.springframework.boot.autoconfigure.sql.init.SqlInitializationProperties;
-import org.springframework.context.annotation.Bean;
+import org.springframework.boot.autoconfigure.flyway.FlywayAutoConfiguration;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.context.event.EventListener;
 
 /**
  * The entry point of the Spring Boot application.
- *
+ * <p>
  * Use the @PWA annotation make the application installable on phones, tablets
  * and some desktop browsers.
- *
  */
-@SpringBootApplication
+@AllArgsConstructor
+@SpringBootApplication(exclude = {FlywayAutoConfiguration.class})
 @Theme(value = "webapp")
 public class Application implements AppShellConfigurator {
 
-    public static void main(String[] args) {
-        SpringApplication.run(Application.class, args);
-    }
+  private final DatabaseSeeder databaseSeeder;
 
-    @Bean
-    SqlDataSourceScriptDatabaseInitializer dataSourceScriptDatabaseInitializer(DataSource dataSource,
-            SqlInitializationProperties properties, SamplePersonRepository repository) {
-        // This bean ensures the database is only initialized when empty
-        return new SqlDataSourceScriptDatabaseInitializer(dataSource, properties) {
-            @Override
-            public boolean initializeDatabase() {
-                if (repository.count() == 0L) {
-                    return super.initializeDatabase();
-                }
-                return false;
-            }
-        };
-    }
+  public static void main(String[] args) {
+    SpringApplication.run(Application.class, args);
+  }
+
+  @EventListener(ApplicationReadyEvent.class)
+  public void doAfterStartup() {
+    databaseSeeder.seedDatabase();
+  }
+
 }
