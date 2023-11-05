@@ -18,20 +18,23 @@ import com.vaadin.flow.router.BeforeEnterObserver;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.auth.AnonymousAllowed;
-import io.cucumber.messages.types.Envelope;
+import io.cucumber.messages.types.GherkinDocument;
 import lombok.extern.slf4j.Slf4j;
 import net.kcww.app.common.view.MainLayout;
 import net.kcww.app.robogen.entity.InputFile;
+import net.kcww.app.robogen.model.XmlElementModel;
+import net.kcww.app.robogen.model.XsdElementModel;
 import net.kcww.app.robogen.service.InputFileService;
+import net.kcww.app.robogen.service.MapperService;
 import net.kcww.app.robogen.service.ParserService;
 import net.kcww.app.robogen.service.impl.GherkinParserServiceImpl;
 import net.kcww.app.robogen.service.impl.XmlParserServiceImpl;
 import net.kcww.app.robogen.service.impl.XsdParserServiceImpl;
-import net.kcww.app.robogen.model.XmlModel;
-import net.kcww.app.robogen.model.XsdModel;
-import org.xml.sax.SAXException;
+import net.kcww.app.robogen.service.impl.exception.GherkinParsingException;
+import net.kcww.app.robogen.service.impl.exception.XmlParsingException;
+import net.kcww.app.robogen.service.impl.exception.XsdParsingException;
 
-import javax.xml.parsers.ParserConfigurationException;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.function.Consumer;
@@ -45,9 +48,10 @@ import java.util.function.Consumer;
 public class RoboGenView extends LitTemplate implements HasStyle, BeforeEnterObserver {
 
   private final InputFileService inputFileService;
-  private final ParserService<Envelope> gherkinParserService;
-  private final ParserService<XmlModel> xmlParserService;
-  private final ParserService<XsdModel> xsdParserService;
+  private final ParserService<GherkinDocument> gherkinParserService;
+  private final ParserService<XmlElementModel> xmlParserService;
+  private final ParserService<XsdElementModel> xsdParserService;
+  private final MapperService mapperService;
   private final InputFile inputFile;
 
   private boolean featureFileUploaded = false;
@@ -64,12 +68,14 @@ public class RoboGenView extends LitTemplate implements HasStyle, BeforeEnterObs
   public RoboGenView(InputFileService inputFileService,
                      GherkinParserServiceImpl gherkinParserService,
                      XmlParserServiceImpl xmlParserService,
-                     XsdParserServiceImpl xsdParserService) {
+                     XsdParserServiceImpl xsdParserService, MapperService mapperService) {
 
     this.inputFileService = inputFileService;
     this.gherkinParserService = gherkinParserService;
     this.xmlParserService = xmlParserService;
     this.xsdParserService = xsdParserService;
+    this.mapperService = mapperService;
+
     this.inputFile = new InputFile();
 
     addClassName("robogen-view");
@@ -106,8 +112,7 @@ public class RoboGenView extends LitTemplate implements HasStyle, BeforeEnterObs
         inputFile.setFeatureFile(bytes);
         featureFileUploaded = true;
         updateSubmitButtonState();
-      },
-      gherkinParserService);
+      });
 
     addUploadSuccessListener(
       xmlFileUpload,
@@ -116,14 +121,12 @@ public class RoboGenView extends LitTemplate implements HasStyle, BeforeEnterObs
         inputFile.setXmlFile(bytes);
         xmlFileUploaded = true;
         updateSubmitButtonState();
-      },
-      xmlParserService);
+      });
 
     addUploadSuccessListener(
       xsdFileUpload,
       inputFile::setXsdFileName,
-      inputFile::setXsdFile,
-      xsdParserService);
+      inputFile::setXsdFile);
 
     registerFileRemoveListeners();
 
@@ -136,36 +139,45 @@ public class RoboGenView extends LitTemplate implements HasStyle, BeforeEnterObs
       inputFileService.save(inputFile);
       Notification.show("Files uploaded successfully.");
       submit.setEnabled(false);
-    });
 
+      try {
+        var gherkinDocuments = gherkinParserService.parse(new ByteArrayInputStream(inputFile.getFeatureFile()));
+        var xmlElement = xmlParserService.parse(new ByteArrayInputStream(inputFile.getXmlFile()));
+        var xsdElement = xsdParserService.parse(new ByteArrayInputStream(inputFile.getXsdFile()));
+        mapperService.map(gherkinDocuments.get(0), xmlElement, xsdElement);
+      } catch (GherkinParsingException e) {
+        log.error("Error parsing Gherkin file", e);
+      } catch (XmlParsingException e) {
+        log.error("Error parsing XML file", e);
+      } catch (XsdParsingException e) {
+        log.error("Error parsing XSD file", e);
+      }
+    });
   }
 
-  private void addUploadSuccessListener(Upload upload,
-                                        Consumer<String> setFileName,
-                                        Consumer<byte[]> setFileBytes,
-                                        ParserService<?> parserService) {
-
+  private void addUploadSuccessListener(Upload upload, Consumer<String> setFileName, Consumer<byte[]> setFileBytes) {
     upload.addSucceededListener(event -> {
       var fileName = event.getFileName();
-      var truncatedFileName = getTruncatedFileName(fileName);
-      setFileName.accept(truncatedFileName);
-
       var buffer = (MemoryBuffer) event.getSource().getReceiver();
-      try (InputStream inputStream = buffer.getInputStream()) {
-        setFileBytes.accept(inputStream.readAllBytes());
-      } catch (IOException e) {
-        log.error("Error reading {} file. Details: {}", fileName, e.getMessage());
-      }
-      Notification.show("File " + fileName + " uploaded successfully.");
-
-      try (InputStream inputStream = buffer.getInputStream()) {
-        parserService.parse(inputStream);
-      } catch (IOException | ParserConfigurationException | SAXException e) {
-        log.error("Error parsing {} file. Details: {}", fileName, e.getMessage());
-      }
+      processUploadedFile(fileName, buffer, setFileName, setFileBytes);
     });
   }
 
+  private void processUploadedFile(String fileName,
+                                   MemoryBuffer buffer,
+                                   Consumer<String> setFileName,
+                                   Consumer<byte[]> setFileBytes) {
+    var truncatedFileName = getTruncatedFileName(fileName);
+    setFileName.accept(truncatedFileName);
+
+    try(InputStream inputStream = buffer.getInputStream()) {
+      byte[] fileContent = inputStream.readAllBytes();
+      setFileBytes.accept(fileContent);
+    } catch (IOException e) {
+      log.error("Error reading file: {}", fileName, e);
+      Notification.show("Error reading file: " + fileName);
+    }
+  }
 
   private String getTruncatedFileName(String fileName) {
     int fileNameLength = fileName.length();
@@ -173,6 +185,7 @@ public class RoboGenView extends LitTemplate implements HasStyle, BeforeEnterObs
 
     String fileExtension = extractFileExtension(fileName);
     int fileExtensionLength = fileExtension.length();
+
     String baseName = fileName.substring(0, fileNameLength - fileExtensionLength);
     int maxBaseLength = InputFile.MAX_FILE_NAME_LENGTH - fileExtensionLength;
     return baseName.substring(0, maxBaseLength) + fileExtension;
@@ -226,5 +239,4 @@ public class RoboGenView extends LitTemplate implements HasStyle, BeforeEnterObs
   @Override
   public void beforeEnter(BeforeEnterEvent event) {
   }
-
 }

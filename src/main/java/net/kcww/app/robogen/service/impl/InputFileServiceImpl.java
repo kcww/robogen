@@ -16,7 +16,8 @@ public class InputFileServiceImpl implements InputFileService {
 
   private final @NonNull InputFileRepository repository;
 
-  @Override public Optional<InputFile> get(Long id) {
+  @Override
+  public Optional<InputFile> get(Long id) {
     return repository.findById(id);
   }
 
@@ -31,5 +32,4 @@ public class InputFileServiceImpl implements InputFileService {
   public void delete(Long id) {
     repository.deleteById(id);
   }
-
 }

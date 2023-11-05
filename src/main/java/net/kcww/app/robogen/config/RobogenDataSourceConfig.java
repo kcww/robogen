@@ -33,7 +33,6 @@ public class RobogenDataSourceConfig extends AbstractDataSourceConfig {
   private static final String ENTITY_PACKAGE_NAME = "net.kcww.app.robogen.entity";
   private static final String PERSISTENCE_UNIT_NAME = "robogen";
 
-
   @Override
   protected String getEntityPackageName() {
     return ENTITY_PACKAGE_NAME;

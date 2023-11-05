@@ -1,18 +1,23 @@
 version: '3.8'
 services:
   db:
-    image: mysql:8.0
+    image: custom-mysql:latest
     restart: always
     ports:
       - "3306:3306"
     environment:
-      - MYSQL_ROOT_PASSWORD=
       - MYSQL_ALLOW_EMPTY_PASSWORD=true
       - MYSQL_DATABASE=webapp
     volumes:
       - mysql_data:/var/lib/mysql
       - mysql_config:/etc/mysql/conf.d
-      - ./sql/init:/docker-entrypoint-initdb.d
+
+      # The following doesn't work on Windows.
+      #- ./sql/init:/docker-entrypoint-initdb.d
+
+      # So, I have to create a custom MySQL image,
+      # > docker build -f Dockerfile -t custom-mysql:latest .
+
 volumes:
   mysql_data:
   mysql_config:
