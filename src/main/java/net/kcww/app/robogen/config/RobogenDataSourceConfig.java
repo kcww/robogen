@@ -21,7 +21,7 @@ import javax.sql.DataSource;
   transactionManagerRef = RobogenDataSourceConfig.TRANSACTION_MANAGER_NAME)
 public class RobogenDataSourceConfig extends AbstractDataSourceConfig {
 
-  public static final String REPOSITORY_PACKAGE_NAME = "net.kcww.app.robogen.repository";
+  public static final String REPOSITORY_PACKAGE_NAME = "net.kcww.app.robogen.input.repository";
   public static final String ENTITY_MANAGER_FACTORY_NAME = "robogenEntityManagerFactory";
   public static final String TRANSACTION_MANAGER_NAME = "robogenTransactionManager";
 
@@ -30,7 +30,7 @@ public class RobogenDataSourceConfig extends AbstractDataSourceConfig {
 
   static final String DATA_SOURCE_NAME = "robogenDataSource";
 
-  private static final String ENTITY_PACKAGE_NAME = "net.kcww.app.robogen.entity";
+  private static final String ENTITY_PACKAGE_NAME = "net.kcww.app.robogen.input.entity";
   private static final String PERSISTENCE_UNIT_NAME = "robogen";
 
   @Override
