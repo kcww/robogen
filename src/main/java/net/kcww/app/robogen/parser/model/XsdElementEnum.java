@@ -7,9 +7,9 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum XsdElementEnum {
 
-  ELEMENT("element"),
-  SIMPLE_TYPE("simpleType"),
-  RESTRICTION("restriction");
+    ELEMENT("element"),
+    SIMPLE_TYPE("simpleType"),
+    RESTRICTION("restriction");
 
-  private final String name;
+    private final String name;
 }

@@ -1,8 +1,8 @@
 package net.kcww.app.robogen.mapper.model;
 
-import io.cucumber.messages.types.Step;
 import lombok.Builder;
 import lombok.Data;
+import net.kcww.app.robogen.parser.model.ScenarioStepModel;
 import net.kcww.app.robogen.parser.model.XmlElementModel;
 import net.kcww.app.robogen.parser.model.XsdElementModel;
 
@@ -10,7 +10,7 @@ import net.kcww.app.robogen.parser.model.XsdElementModel;
 @Builder
 public class RelationModel {
 
-  private Step step;
-  private XmlElementModel xmlElement;
-  private XsdElementModel xsdElement;
+    private ScenarioStepModel scenarioStep; // Parsed scenario steps
+    private XmlElementModel xmlElement;     // Parsed UI elements
+    private XsdElementModel xsdElement;     // Parsed XSD elements
 }

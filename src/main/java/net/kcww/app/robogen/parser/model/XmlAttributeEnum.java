@@ -7,15 +7,15 @@ import lombok.Getter;
 @AllArgsConstructor
 public enum XmlAttributeEnum {
 
-  ID("id"),
-  DEBUG_ID("debugId"),
-  NAME("name"),
-  LABEL("label"),
-  VALUE("value"),
-  MIN("min"),
-  MAX("max"),
-  REQUIRED("required");
+    ID("id"),
+    DEBUG_ID("debugId"),
+    NAME("name"),
+    LABEL("label"),
+    VALUE("value"),
+    MIN("min"),
+    MAX("max"),
+    REQUIRED("required");
 
-  private final String name;
+    private final String name;
 
 }

@@ -21,15 +21,15 @@ import org.springframework.context.event.EventListener;
 @Theme(value = "webapp")
 public class Application implements AppShellConfigurator {
 
-  private final DatabaseSeeder databaseSeeder;
+    private final DatabaseSeeder databaseSeeder;
 
-  public static void main(String[] args) {
-    SpringApplication.run(Application.class, args);
-  }
+    public static void main(String[] args) {
+        SpringApplication.run(Application.class, args);
+    }
 
-  @EventListener(ApplicationReadyEvent.class)
-  public void doAfterStartup() {
-    databaseSeeder.seedDatabase();
-  }
+    @EventListener(ApplicationReadyEvent.class)
+    public void doAfterStartup() {
+        databaseSeeder.seedDatabase();
+    }
 
 }

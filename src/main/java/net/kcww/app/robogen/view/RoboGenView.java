@@ -36,26 +36,26 @@ import java.util.function.Consumer;
 @Slf4j
 public class RoboGenView extends LitTemplate implements HasStyle, BeforeEnterObserver {
 
-  private final UserInputService userInputService;
+  private final UserInputService         userInputService;
   private final TaskProcessor<UserInput> taskProcessor;
 
   private final UserInput userInput;
 
   private boolean featureFileUploaded = false;
-  private boolean xmlFileUploaded = false;
+  private boolean xmlFileUploaded     = false;
 
   private @Id Upload featureFileUpload;
   private @Id Upload xmlFileUpload;
   private @Id Upload xsdFileUpload;
-  private @Id Span maxFeatureFileSizeLabel;
-  private @Id Span maxXmlFileSizeLabel;
-  private @Id Span maxXsdFileSizeLabel;
+  private @Id Span   maxFeatureFileSizeLabel;
+  private @Id Span   maxXmlFileSizeLabel;
+  private @Id Span   maxXsdFileSizeLabel;
   private @Id Button submit;
 
   public RoboGenView(UserInputService userInputService, TaskProcessor<UserInput> taskProcessor) {
     this.userInputService = userInputService;
-    this.taskProcessor = taskProcessor;
-    this.userInput = new UserInput();
+    this.taskProcessor    = taskProcessor;
+    this.userInput        = new UserInput();
 
     addClassName("robogen-view");
     setupUploadComponents();
@@ -76,7 +76,7 @@ public class RoboGenView extends LitTemplate implements HasStyle, BeforeEnterObs
     upload.setMaxFileSize(maxFileSize);
     upload.setAcceptedFileTypes(fileType);
     var fileExt = fileType[1].substring(1).toUpperCase();
-    var i18n = new FileUploadI18N();
+    var i18n    = new FileUploadI18N();
     i18n.getAddFiles().setOne("Upload " + fileExt + "...");
     i18n.getDropFiles().setOne("Drop " + fileExt + " file here");
     upload.setI18n(i18n);
@@ -85,18 +85,18 @@ public class RoboGenView extends LitTemplate implements HasStyle, BeforeEnterObs
 
   private void registerListeners() {
     addUploadSuccessListener(featureFileUpload, userInput::setFeatureFileName,
-      bytes -> {
-        userInput.setFeatureFile(bytes);
-        featureFileUploaded = true;
-        updateSubmitButtonState();
-      });
+                             bytes -> {
+                               userInput.setFeatureFile(bytes);
+                               featureFileUploaded = true;
+                               updateSubmitButtonState();
+                             });
 
     addUploadSuccessListener(xmlFileUpload, userInput::setXmlFileName,
-      bytes -> {
-        userInput.setXmlFile(bytes);
-        xmlFileUploaded = true;
-        updateSubmitButtonState();
-      });
+                             bytes -> {
+                               userInput.setXmlFile(bytes);
+                               xmlFileUploaded = true;
+                               updateSubmitButtonState();
+                             });
 
     addUploadSuccessListener(xsdFileUpload, userInput::setXsdFileName, userInput::setXsdFile);
 
@@ -119,7 +119,7 @@ public class RoboGenView extends LitTemplate implements HasStyle, BeforeEnterObs
   private void addUploadSuccessListener(Upload upload, Consumer<String> setFileName, Consumer<byte[]> setFileBytes) {
     upload.addSucceededListener(event -> {
       var fileName = event.getFileName();
-      var buffer = (MemoryBuffer) event.getSource().getReceiver();
+      var buffer   = (MemoryBuffer) event.getSource().getReceiver();
       processUploadedFile(fileName, buffer, setFileName, setFileBytes);
     });
   }
@@ -128,6 +128,7 @@ public class RoboGenView extends LitTemplate implements HasStyle, BeforeEnterObs
                                    MemoryBuffer buffer,
                                    Consumer<String> setFileName,
                                    Consumer<byte[]> setFileBytes) {
+
     var truncatedFileName = getTruncatedFileName(fileName);
     setFileName.accept(truncatedFileName);
 
@@ -144,11 +145,11 @@ public class RoboGenView extends LitTemplate implements HasStyle, BeforeEnterObs
     int fileNameLength = fileName.length();
     if (fileNameLength <= UserInput.MAX_FILE_NAME_LENGTH) return fileName;
 
-    String fileExtension = extractFileExtension(fileName);
-    int fileExtensionLength = fileExtension.length();
+    String fileExtension       = extractFileExtension(fileName);
+    int    fileExtensionLength = fileExtension.length();
 
-    String baseName = fileName.substring(0, fileNameLength - fileExtensionLength);
-    int maxBaseLength = UserInput.MAX_FILE_NAME_LENGTH - fileExtensionLength;
+    String baseName      = fileName.substring(0, fileNameLength - fileExtensionLength);
+    int    maxBaseLength = UserInput.MAX_FILE_NAME_LENGTH - fileExtensionLength;
     return baseName.substring(0, maxBaseLength) + fileExtension;
   }
 
@@ -168,20 +169,19 @@ public class RoboGenView extends LitTemplate implements HasStyle, BeforeEnterObs
     var eventType = "file-remove";
 
     featureFileUpload.getElement().addEventListener(eventType, event -> handleFileRemove(
-      userInput::setFeatureFileName,
-      userInput::setFeatureFile,
-      () -> featureFileUploaded = false));
+    userInput::setFeatureFileName,
+    userInput::setFeatureFile,
+    () -> featureFileUploaded = false));
 
     xmlFileUpload.getElement().addEventListener(eventType, event -> handleFileRemove(
-      userInput::setXmlFileName,
-      userInput::setXmlFile,
-      () -> xmlFileUploaded = false));
+    userInput::setXmlFileName,
+    userInput::setXmlFile,
+    () -> xmlFileUploaded = false));
 
     xsdFileUpload.getElement().addEventListener(eventType, event -> handleFileRemove(
-      userInput::setXsdFileName,
-      userInput::setXsdFile,
-      () -> {
-      }));
+    userInput::setXsdFileName,
+    userInput::setXsdFile,
+    () -> {}));
   }
 
   private void handleFileRemove(Consumer<String> setFileName, Consumer<byte[]> setFileBytes, Runnable onRemoved) {
@@ -192,7 +192,7 @@ public class RoboGenView extends LitTemplate implements HasStyle, BeforeEnterObs
   }
 
   private void onFileUploadRejected(FileRejectedEvent event) {
-    String errorMessage = event.getErrorMessage();
+    String       errorMessage = event.getErrorMessage();
     Notification notification = Notification.show(errorMessage, 5000, Notification.Position.MIDDLE);
     notification.addThemeVariants(NotificationVariant.LUMO_ERROR);
   }

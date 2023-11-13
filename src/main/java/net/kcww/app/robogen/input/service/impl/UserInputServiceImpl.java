@@ -14,22 +14,22 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class UserInputServiceImpl implements UserInputService {
 
-  private final @NonNull UserInputRepository repository;
+    private final @NonNull UserInputRepository repository;
 
-  @Override
-  public Optional<UserInput> get(Long id) {
-    return repository.findById(id);
-  }
+    @Override
+    public Optional<UserInput> get(Long id) {
+        return repository.findById(id);
+    }
 
-  @Override
-  @Transactional("robogenTransactionManager")
-  public UserInput save(UserInput entity) {
-    return repository.save(entity);
-  }
+    @Override
+    @Transactional("robogenTransactionManager")
+    public UserInput save(UserInput entity) {
+        return repository.save(entity);
+    }
 
-  @Override
-  @Transactional("robogenTransactionManager")
-  public void delete(Long id) {
-    repository.deleteById(id);
-  }
+    @Override
+    @Transactional("robogenTransactionManager")
+    public void delete(Long id) {
+        repository.deleteById(id);
+    }
 }

@@ -6,7 +6,5 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface UserInputRepository extends
-  JpaRepository<UserInput, Long>,
-  JpaSpecificationExecutor<UserInput> {
+public interface UserInputRepository extends JpaRepository<UserInput, Long>, JpaSpecificationExecutor<UserInput> {
 }

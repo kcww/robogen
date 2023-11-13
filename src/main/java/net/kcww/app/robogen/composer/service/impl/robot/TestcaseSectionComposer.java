@@ -1,23 +1,22 @@
 package net.kcww.app.robogen.composer.service.impl.robot;
 
-import net.kcww.app.robogen.composer.model.MaterialModel;
+import net.kcww.app.robogen.composer.model.ComposingMaterialModel;
+import net.kcww.app.robogen.composer.model.RobotEnum;
 
 public class TestcaseSectionComposer extends AbstractComposer {
 
-  private static final String HEADER = "*** Test Cases ***";
-
   @Override
-  public String compose(MaterialModel model) {
+  public String compose(ComposingMaterialModel model) {
     header();            // *** Test Cases ***
     userKeyword(model);  // <scenario-name>
     return draft();
   }
 
   private void header() {
-    newlineAppend(HEADER);
+    newlineAppend(RobotEnum.TEST_CASE_SECTION.getKeyword());
   }
 
-  private void userKeyword(MaterialModel model) {
+  private void userKeyword(ComposingMaterialModel model) {
     newlineAppend(model.getScenarioName());
   }
 }

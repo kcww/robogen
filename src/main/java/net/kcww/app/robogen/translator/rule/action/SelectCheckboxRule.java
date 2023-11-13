@@ -1,21 +1,12 @@
 package net.kcww.app.robogen.translator.rule.action;
 
-import net.kcww.app.robogen.translator.model.KeywordModel;
-import net.kcww.app.robogen.translator.rule.KeywordRule;
-import net.kcww.app.robogen.translator.rule.ActionableRule;
-import net.kcww.app.robogen.mapper.model.RelationModel;
+import net.kcww.app.robogen.translator.model.selenium.SeleniumElementActionKeywordEnum;
 import org.springframework.stereotype.Service;
 
 @Service
-public class SelectCheckboxRule implements KeywordRule<RelationModel, KeywordModel>, ActionableRule {
-  
-  @Override
-  public boolean isApplicable(RelationModel model) {
-    return false;
-  }
+public final class SelectCheckboxRule extends AbstractElementRule {
 
-  @Override
-  public KeywordModel translate(RelationModel model) {
-    return null;
-  }
+    public SelectCheckboxRule() {
+        super(SeleniumElementActionKeywordEnum.SELECT_CHECKBOX);
+    }
 }

@@ -1,12 +1,12 @@
 package net.kcww.app.robogen.composer.service.impl.robot;
 
-import net.kcww.app.robogen.composer.model.MaterialModel;
+import net.kcww.app.robogen.composer.model.ComposingMaterialModel;
 import net.kcww.app.robogen.composer.service.ComposerService;
 
 import static net.kcww.app.robogen.composer.helper.Composers.INDENT;
 import static net.kcww.app.robogen.composer.helper.Composers.NEW_LINE;
 
-public abstract class AbstractComposer implements ComposerService<MaterialModel, String> {
+public abstract class AbstractComposer implements ComposerService<ComposingMaterialModel, String> {
 
   private final StringBuilder builder = new StringBuilder();
 
