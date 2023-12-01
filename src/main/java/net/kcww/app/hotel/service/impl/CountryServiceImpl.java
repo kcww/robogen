@@ -14,12 +14,12 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CountryServiceImpl implements CountryService {
 
-  private final @NonNull CountryRepository repository;
+    private final @NonNull CountryRepository repository;
 
-  @Override
-  @Cacheable("countries")
-  public List<Country> list() {
-    return repository.findAll();
-  }
+    @Override
+    @Cacheable("countries")
+    public List<Country> list() {
+        return repository.findAll();
+    }
 
 }

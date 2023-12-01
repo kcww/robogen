@@ -18,7 +18,7 @@ import java.io.InputStream;
  * for XML document parsing.
  */
 @Slf4j
-public abstract class AbstractParserService<T> implements ParserService<InputStream, T> {
+public abstract class AbstractParserService<V> implements ParserService<InputStream, V> {
 
     public static final String WILD_CARD = "*";
 
@@ -44,7 +44,7 @@ public abstract class AbstractParserService<T> implements ParserService<InputStr
      * @throws E if a parsing error occurs.
      */
     @Override
-    public abstract <E extends ParsingException> T parse(InputStream inputStream) throws E;
+    public abstract <E extends ParsingException> V parse(InputStream inputStream) throws E;
 
     /**
      * Builds a Document from the given InputStream.
@@ -70,7 +70,7 @@ public abstract class AbstractParserService<T> implements ParserService<InputStr
     private DocumentBuilder createDocumentBuilder() {
         try {
             return factory.newDocumentBuilder();
-        } catch (javax.xml.parsers.ParserConfigurationException e) {
+        } catch (ParserConfigurationException e) {
             log.error("Error configuring parser.", e);
             throw new UncheckedParserConfigurationException("Failed to create DocumentBuilder", e);
         }

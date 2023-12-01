@@ -4,6 +4,7 @@ import java.util.List;
 
 public interface TranslatorService<T, V> {
 
-  V translate(T model);
-  List<V> translate(List<T> models);
+    V translate(T model);
+
+    List<V> translate(List<T> models);
 }

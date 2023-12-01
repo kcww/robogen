@@ -2,8 +2,10 @@ package net.kcww.app.robogen.parser.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.experimental.Accessors;
 
 @Getter
+@Accessors(fluent = true)
 @AllArgsConstructor
 public enum XsdElementEnum {
 
@@ -11,5 +13,5 @@ public enum XsdElementEnum {
     SIMPLE_TYPE("simpleType"),
     RESTRICTION("restriction");
 
-    private final String name;
+    private final String tagName;
 }

@@ -1,7 +1,7 @@
 package net.kcww.app.robogen.mapper.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
-import net.kcww.app.robogen.common.helper.KeyMatcher;
+import net.kcww.app.robogen.common.helper.TextMatcher;
 import net.kcww.app.robogen.mapper.model.RelationModel;
 import net.kcww.app.robogen.mapper.service.MapperService;
 import net.kcww.app.robogen.parser.model.ParsedDataModel;
@@ -11,37 +11,22 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @Slf4j
 public class IdMapperServiceImpl implements MapperService<ParsedDataModel, List<RelationModel>> {
 
-    /**
-     * Maps Gherkin document steps to their corresponding XML and XSD elements.
-     *
-     * @param parsedData Parsed data containing Gherkin, XML, and XSD elements.
-     * @return A list of RelationModels representing the mappings between Gherkin steps and XML/XSD elements.
-     */
     @Override
     public List<RelationModel> map(ParsedDataModel parsedData) {
-        return parsedData.getGherkinModel().getScenarioSteps().stream()
-                .map(step -> createRelationModel(step, parsedData))
-                .collect(Collectors.toList());
+        return parsedData.gherkinModel().scenarioSteps().stream()
+                .map(scenarioStep -> createRelationModel(scenarioStep, parsedData)).toList();
     }
 
-    /**
-     * Creates a RelationModel mapping a ScenarioStepModel to corresponding XML and XSD elements.
-     *
-     * @param scenarioStep Scenario scenarioStep model.
-     * @param parsedData   Parsed data model.
-     * @return A RelationModel representing the mapping.
-     */
     private RelationModel createRelationModel(ScenarioStepModel scenarioStep, ParsedDataModel parsedData) {
         var builder = RelationModel.builder().scenarioStep(scenarioStep);
 
-        parsedData.getXmlElements().stream()
-                .filter(xmlElement -> matchesScenarioStep(xmlElement, scenarioStep))
+        parsedData.xmlElements().stream()
+                .filter(xmlElement -> isMatchFound(xmlElement, scenarioStep))
                 .findFirst()
                 .ifPresent(xmlElement -> {
                     builder.xmlElement(xmlElement);
@@ -51,31 +36,22 @@ public class IdMapperServiceImpl implements MapperService<ParsedDataModel, List<
         return builder.build();
     }
 
-    private boolean matchesScenarioStep(XmlElementModel xmlElement, ScenarioStepModel scenarioStep) {
-        var id = scenarioStep.getId();
-        if (id == null || id.isBlank()) return false;
-
-        var normalizedId = KeyMatcher.normalize(id);
-        return Optional.ofNullable(xmlElement.getId()).map(KeyMatcher::normalize).stream()
-                .anyMatch(normalizedId::equalsIgnoreCase) ||
-                Optional.ofNullable(xmlElement.getName()).map(KeyMatcher::normalize).stream()
-                        .anyMatch(normalizedId::equalsIgnoreCase);
+    private boolean isMatchFound(XmlElementModel xmlElement, ScenarioStepModel scenarioStep) {
+        String xmlElementId = xmlElement.id();
+        Optional<String> scenarioStepId = getScenarioStepIdCandidate(xmlElementId, scenarioStep);
+        return scenarioStepId.isPresent() && scenarioStepId.get().equalsIgnoreCase(xmlElementId);
     }
 
-    /**
-     * Matches an XML element to a corresponding XSD element and updates the RelationModel builder.
-     *
-     * @param builder    RelationModel builder.
-     * @param xmlElement XML element model.
-     * @param parsedData Parsed data model.
-     */
+    private Optional<String> getScenarioStepIdCandidate(String xmlElementId, ScenarioStepModel scenarioStep) {
+        return scenarioStep.parameters().stream().findFirst().or(() ->
+                TextMatcher.extractScenarioStepId(scenarioStep.text(), xmlElementId));
+    }
+
     private void matchXsdElement(RelationModel.RelationModelBuilder builder,
                                  XmlElementModel xmlElement,
                                  ParsedDataModel parsedData) {
-
-        parsedData.getXsdElements().stream()
-                .filter(xsdElement -> xsdElement.getName().equalsIgnoreCase(xmlElement.getId()) ||
-                        xsdElement.getName().equalsIgnoreCase(xmlElement.getName()))
+        parsedData.xsdElements().stream()
+                .filter(xsdElement -> xsdElement.name().equalsIgnoreCase(xmlElement.id()))
                 .findFirst()
                 .ifPresent(builder::xsdElement);
     }

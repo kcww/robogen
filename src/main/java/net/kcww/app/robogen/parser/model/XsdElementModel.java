@@ -1,13 +1,17 @@
 package net.kcww.app.robogen.parser.model;
 
 import lombok.Data;
+import lombok.experimental.Accessors;
 
 import java.util.List;
 
 @Data
+@Accessors(fluent = true)
 public class XsdElementModel {
 
     // XSD Attributes
+    // e.g., <xs:element name="firstName" type="xs:string" nillable="true">
+    //       <xs:element name="lastName" type="xs:string" minOccurs="1" maxOccurs="1">
     private String name;
     private String type;
     private boolean nillable = false;

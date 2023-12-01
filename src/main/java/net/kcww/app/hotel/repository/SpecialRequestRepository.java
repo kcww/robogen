@@ -6,7 +6,5 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface SpecialRequestRepository extends
-  JpaRepository<SpecialRequest, Long>,
-  JpaSpecificationExecutor<SpecialRequest> {
+public interface SpecialRequestRepository extends JpaRepository<SpecialRequest, Long>, JpaSpecificationExecutor<SpecialRequest> {
 }

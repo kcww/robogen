@@ -11,10 +11,10 @@ import javax.sql.DataSource;
 @Component
 public class HotelFlywayInitializer extends AbstractFlywayInitializer {
 
-  @Autowired
-  public HotelFlywayInitializer(@Value("${spring.datasource.hotel.flyway.locations}") String location,
-                                @Qualifier(HotelDataSourceConfig.DATA_SOURCE_NAME) DataSource dataSource) {
-    super(location, dataSource);
-  }
+    @Autowired
+    public HotelFlywayInitializer(@Value("${spring.datasource.hotel.flyway.locations}") String location,
+                                  @Qualifier(HotelDataSourceConfig.DATA_SOURCE_NAME) DataSource dataSource) {
 
+        super(location, dataSource);
+    }
 }

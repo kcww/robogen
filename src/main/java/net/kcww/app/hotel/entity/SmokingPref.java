@@ -7,9 +7,9 @@ import lombok.RequiredArgsConstructor;
 @Getter
 public enum SmokingPref {
 
-  NON_SMOKING("Non-smoking"),
-  SMOKING("Smoking");
+    NON_SMOKING("Non-smoking"),
+    SMOKING("Smoking");
 
-  private final String label;
+    private final String label;
 
 }

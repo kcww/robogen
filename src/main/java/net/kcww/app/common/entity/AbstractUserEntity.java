@@ -4,14 +4,15 @@ import jakarta.persistence.MappedSuperclass;
 import jakarta.persistence.Version;
 import lombok.AccessLevel;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.Setter;
 
 @MappedSuperclass
 @Data
-public class AbstractUserEntity extends AbstractEntity{
+@EqualsAndHashCode(callSuper = true)
+public abstract class AbstractUserEntity extends AbstractEntity {
 
-  @Version
-  @Setter(AccessLevel.NONE)
-  private int version;
-
+    @Version
+    @Setter(AccessLevel.NONE)
+    private int version;
 }

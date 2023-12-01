@@ -16,35 +16,43 @@ import static net.kcww.app.robogen.parser.helper.Elements.setAttributeIfPresent;
 import static net.kcww.app.robogen.parser.helper.Elements.toStream;
 import static net.kcww.app.robogen.parser.model.XsdAttributeEnum.*;
 import static net.kcww.app.robogen.parser.model.XsdElementEnum.RESTRICTION;
+import static net.kcww.app.robogen.parser.model.XsdElementEnum.SIMPLE_TYPE;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @Slf4j
 public final class XsdRestrictions {
 
     private static final Map<String, BiConsumer<Element, XsdElementModel.Restriction>> restrictionChildHandlers = Map.of(
-            PATTERN.getName(), XsdRestrictions::handlePattern,
-            MIN_LENGTH.getName(), XsdRestrictions::handleMinLength,
-            MAX_LENGTH.getName(), XsdRestrictions::handleMaxLength,
-            MIN_INCLUSIVE.getName(), XsdRestrictions::handleMinInclusive,
-            MAX_INCLUSIVE.getName(), XsdRestrictions::handleMaxInclusive,
-            ENUMERATION.getName(), XsdRestrictions::handleEnumeration
+            PATTERN.attrName(), XsdRestrictions::handlePattern,
+            MIN_LENGTH.attrName(), XsdRestrictions::handleMinLength,
+            MAX_LENGTH.attrName(), XsdRestrictions::handleMaxLength,
+            MIN_INCLUSIVE.attrName(), XsdRestrictions::handleMinInclusive,
+            MAX_INCLUSIVE.attrName(), XsdRestrictions::handleMaxInclusive,
+            ENUMERATION.attrName(), XsdRestrictions::handleEnumeration
     );
 
     public static Optional<XsdElementModel.Restriction> get(Element xsdElement) {
-        return XsdSimpleTypes.get(xsdElement)
+        return getXsdSimpleTypes(xsdElement)
                 .flatMap(XsdRestrictions::extract)
                 .map(XsdRestrictions::create);
     }
 
+    // To get the first SimpleType element
+    public static Optional<Element> getXsdSimpleTypes(Element element) {
+        return toStream(element.getChildNodes())
+                .filter(child -> SIMPLE_TYPE.tagName().equals(child.getLocalName()))
+                .findFirst();
+    }
+
     private static Optional<Element> extract(Element simpleType) {
         return toStream(simpleType.getChildNodes())
-                .filter(child -> RESTRICTION.getName().equals(child.getLocalName()))
+                .filter(child -> RESTRICTION.tagName().equals(child.getLocalName()))
                 .findFirst();
     }
 
     private static XsdElementModel.Restriction create(Element restriction) {
         var model = new XsdElementModel.Restriction();
-        setAttributeIfPresent(restriction, BASE.getName(), Elements::stripPrefix, model::setBase);
+        setAttributeIfPresent(restriction, BASE.attrName(), Elements::stripPrefix, model::base);
         setRestrictionChildrenIfPresent(restriction, model);
         return model;
     }
@@ -64,30 +72,30 @@ public final class XsdRestrictions {
     }
 
     private static void handlePattern(Element element, XsdElementModel.Restriction restriction) {
-        setAttributeIfPresent(element, VALUE.getName(), Function.identity(), restriction::setPattern);
+        setAttributeIfPresent(element, VALUE.attrName(), Function.identity(), restriction::pattern);
     }
 
     private static void handleMinLength(Element element, XsdElementModel.Restriction restriction) {
-        setAttributeIfPresent(element, VALUE.getName(), Integer::valueOf, restriction::setMinLength);
+        setAttributeIfPresent(element, VALUE.attrName(), Integer::valueOf, restriction::minLength);
     }
 
     private static void handleMaxLength(Element element, XsdElementModel.Restriction restriction) {
-        setAttributeIfPresent(element, VALUE.getName(), Integer::valueOf, restriction::setMaxLength);
+        setAttributeIfPresent(element, VALUE.attrName(), Integer::valueOf, restriction::maxLength);
     }
 
     private static void handleMinInclusive(Element element, XsdElementModel.Restriction restriction) {
-        setAttributeIfPresent(element, VALUE.getName(), Integer::valueOf, restriction::setMinInclusive);
+        setAttributeIfPresent(element, VALUE.attrName(), Integer::valueOf, restriction::minInclusive);
     }
 
     private static void handleMaxInclusive(Element element, XsdElementModel.Restriction restriction) {
-        setAttributeIfPresent(element, VALUE.getName(), Integer::valueOf, restriction::setMaxInclusive);
+        setAttributeIfPresent(element, VALUE.attrName(), Integer::valueOf, restriction::maxInclusive);
     }
 
     private static void handleEnumeration(Element element, XsdElementModel.Restriction restriction) {
-        Optional.of(element.getAttribute(VALUE.getName())).ifPresent(value -> {
-            var enums = Optional.ofNullable(restriction.getEnumerations()).orElseGet(ArrayList::new);
+        Optional.of(element.getAttribute(VALUE.attrName())).ifPresent(value -> {
+            var enums = Optional.ofNullable(restriction.enumerations()).orElseGet(ArrayList::new);
             enums.add(value);
-            restriction.setEnumerations(enums);
+            restriction.enumerations(enums);
         });
     }
 }

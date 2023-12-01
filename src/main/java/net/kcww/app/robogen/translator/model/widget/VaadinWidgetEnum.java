@@ -32,8 +32,8 @@ public enum VaadinWidgetEnum implements Widget {
     DATE_PICKER("DatePicker", getAptSeleniumKeywords(Element.TEXT)),
     INTEGER_FIELD("IntegerField", getAptSeleniumKeywords(Element.TEXT)),
     TEXT_FIELD("TextField", getAptSeleniumKeywords(Element.TEXT)),
-    TEXT_AREA("TextArea", getAptSeleniumKeywords(Element.TEXT));
+    TEXT_AREA("TextArea", getAptSeleniumKeywords(Element.TEXTAREA));
 
-    private final String tag;
+    private final String tagName;
     private final Set<SeleniumKeyword> aptKeywords;
 }

@@ -8,13 +8,14 @@ import org.springframework.data.jpa.domain.Specification;
 import java.util.Optional;
 
 public interface BookingInfoService {
-  Optional<BookingInfo> get(Long id);
 
-  BookingInfo save(BookingInfo entity);
+    Optional<BookingInfo> get(Long id);
 
-  void delete(Long id);
+    BookingInfo save(BookingInfo entity);
 
-  Page<BookingInfo> list(Pageable pageable);
+    void delete(Long id);
 
-  Page<BookingInfo> list(Pageable pageable, Specification<BookingInfo> filter);
+    Page<BookingInfo> list(Pageable pageable);
+
+    Page<BookingInfo> list(Pageable pageable, Specification<BookingInfo> filter);
 }

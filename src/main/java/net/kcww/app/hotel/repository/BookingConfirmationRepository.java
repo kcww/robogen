@@ -6,7 +6,5 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface BookingConfirmationRepository extends
-  JpaRepository<BookingConfirmation, Long>,
-  JpaSpecificationExecutor<BookingConfirmation> {
+public interface BookingConfirmationRepository extends JpaRepository<BookingConfirmation, Long>, JpaSpecificationExecutor<BookingConfirmation> {
 }

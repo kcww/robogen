@@ -8,6 +8,7 @@ import net.kcww.app.robogen.parser.exception.ParsingException;
  * @param <T> the type of the input to the parse method.
  * @param <V> the type of the result produced by the parse method.
  */
+@FunctionalInterface
 public interface ParserService<T, V> {
 
     /**

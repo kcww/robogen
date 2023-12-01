@@ -1,5 +1,8 @@
 package net.kcww.app.robogen.translator.helper;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import net.kcww.app.robogen.translator.model.selenium.SeleniumElementActionKeywordEnum;
 import net.kcww.app.robogen.translator.model.selenium.SeleniumElementVerificationKeywordEnum;
 import net.kcww.app.robogen.translator.model.selenium.SeleniumKeyword;
@@ -9,11 +12,13 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@Slf4j
 public final class Widgets {
 
     // Selenium element names
     public enum Element {
-        BUTTON, CHECKBOX, FILE_UPLOAD, IMAGE, LINK, LIST, PASSWORD, RADIO, TEXT;
+        BUTTON, CHECKBOX, FILE_UPLOAD, IMAGE, LINK, LIST, PASSWORD, RADIO, TEXT, TEXTAREA;
     }
 
     public static Set<SeleniumKeyword> getAptSeleniumKeywords(Element name) {
@@ -24,6 +29,7 @@ public final class Widgets {
                 break;
             case CHECKBOX:
                 keywords.add(SeleniumElementActionKeywordEnum.SELECT_CHECKBOX);
+                keywords.add(SeleniumElementActionKeywordEnum.UNSELECT_CHECKBOX);
                 keywords.add(SeleniumElementVerificationKeywordEnum.CHECK_BOX_SHOULD_BE_SELECTED);
                 keywords.add(SeleniumElementVerificationKeywordEnum.CHECK_BOX_SHOULD_NOT_BE_SELECTED);
                 break;
@@ -38,6 +44,9 @@ public final class Widgets {
                 break;
             case LIST:
                 keywords.add(SeleniumElementActionKeywordEnum.SELECT_FROM_LIST_BY_LABEL);
+                keywords.add(SeleniumElementActionKeywordEnum.UNSELECT_FROM_LIST_BY_LABEL);
+                keywords.add(SeleniumElementActionKeywordEnum.SELECT_ALL_FROM_LIST);
+                keywords.add(SeleniumElementActionKeywordEnum.UNSELECT_ALL_FROM_LIST);
                 keywords.add(SeleniumElementVerificationKeywordEnum.LIST_SELECTION_SHOULD_BE);
                 keywords.add(SeleniumElementVerificationKeywordEnum.LIST_SHOULD_HAVE_NO_SELECTIONS);
                 break;
@@ -54,6 +63,11 @@ public final class Widgets {
             case TEXT:
                 keywords.add(SeleniumElementActionKeywordEnum.INPUT_TEXT);
                 keywords.add(SeleniumElementVerificationKeywordEnum.TEXTFIELD_SHOULD_CONTAIN);
+                keywords.add(SeleniumWaitingKeywordEnum.WAIT_UNTIL_ELEMENT_CONTAINS);
+                break;
+            case TEXTAREA:
+                keywords.add(SeleniumElementActionKeywordEnum.INPUT_TEXT);
+                keywords.add(SeleniumElementVerificationKeywordEnum.TEXTAREA_SHOULD_CONTAIN);
                 keywords.add(SeleniumWaitingKeywordEnum.WAIT_UNTIL_ELEMENT_CONTAINS);
                 break;
             default:

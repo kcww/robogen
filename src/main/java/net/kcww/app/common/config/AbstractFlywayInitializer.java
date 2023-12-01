@@ -9,16 +9,15 @@ import javax.sql.DataSource;
 @AllArgsConstructor
 public abstract class AbstractFlywayInitializer {
 
-  private final String location;
-  private final DataSource dataSource;
+    private final String location;
+    private final DataSource dataSource;
 
-  @PostConstruct
-  public void migrate() {
-    Flyway.configure()
-      .dataSource(dataSource)
-      .locations(location)
-      .load()
-      .migrate();
-  }
-
+    @PostConstruct
+    public void migrate() {
+        Flyway.configure()
+                .dataSource(dataSource)
+                .locations(location)
+                .load()
+                .migrate();
+    }
 }

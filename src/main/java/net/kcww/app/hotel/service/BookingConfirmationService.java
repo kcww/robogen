@@ -8,13 +8,14 @@ import org.springframework.data.jpa.domain.Specification;
 import java.util.Optional;
 
 public interface BookingConfirmationService {
-  Optional<BookingConfirmation> get(Long id);
 
-  BookingConfirmation save(BookingConfirmation entity);
+    Optional<BookingConfirmation> get(Long id);
 
-  void delete(Long id);
+    BookingConfirmation save(BookingConfirmation entity);
 
-  Page<BookingConfirmation> list(Pageable pageable);
+    void delete(Long id);
 
-  Page<BookingConfirmation> list(Pageable pageable, Specification<BookingConfirmation> filter);
+    Page<BookingConfirmation> list(Pageable pageable);
+
+    Page<BookingConfirmation> list(Pageable pageable, Specification<BookingConfirmation> filter);
 }

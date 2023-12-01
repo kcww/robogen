@@ -15,13 +15,13 @@ import java.util.List;
 //@Slf4j
 public class RoomTypeServiceImpl implements RoomTypeService {
 
-  private final @NonNull RoomTypeRepository repository;
+    private final @NonNull RoomTypeRepository repository;
 
-  @Override
-  @Cacheable("roomTypes")
-  public List<RoomType> list() {
+    @Override
+    @Cacheable("roomTypes")
+    public List<RoomType> list() {
 //    log.info("Getting room types from database.");
-    return repository.findAll();
-  }
+        return repository.findAll();
+    }
 
 }

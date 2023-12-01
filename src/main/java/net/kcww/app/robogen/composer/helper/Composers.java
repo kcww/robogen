@@ -33,9 +33,8 @@ public final class Composers {
 
   public static List<String> extractArguments(List<KeywordModel> keywords) {
     return keywords.stream()
-            .map(KeywordModel::getValue)
-            .filter(Optional::isPresent)
-            .map(Optional::get)
+            .map(KeywordModel::value)
+            .filter(value -> value != null && !value.isBlank())
             .collect(Collectors.toList());
   }
 
@@ -44,12 +43,12 @@ public final class Composers {
   }
 
   private static String formatTestStep(KeywordModel keyword) {
-    var stepBuilder = new StringBuilder(keyword.getKeyword());
-    if (keyword.getLocator() != null) {
-      stepBuilder.append(INDENT).append(keyword.getLocator());
+    var stepBuilder = new StringBuilder(keyword.keyword());
+    if (keyword.locator() != null) {
+      stepBuilder.append(INDENT).append(keyword.locator());
     }
-    if (keyword.getValue() != null) {
-      stepBuilder.append(INDENT).append(keyword.getValue());
+    if (keyword.value() != null) {
+      stepBuilder.append(INDENT).append(keyword.value());
     }
     return stepBuilder.toString();
   }

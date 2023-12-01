@@ -2,8 +2,10 @@ package net.kcww.app.robogen.parser.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.experimental.Accessors;
 
 @Getter
+@Accessors(fluent = true)
 @AllArgsConstructor
 public enum XmlAttributeEnum {
 
@@ -16,6 +18,6 @@ public enum XmlAttributeEnum {
     MAX("max"),
     REQUIRED("required");
 
-    private final String name;
+    private final String attrName;
 
 }

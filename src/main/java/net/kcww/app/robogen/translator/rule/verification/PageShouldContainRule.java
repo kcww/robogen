@@ -1,8 +1,9 @@
 package net.kcww.app.robogen.translator.rule.verification;
 
-import net.kcww.app.robogen.mapper.model.RelationModel;
-import net.kcww.app.robogen.translator.model.KeywordModel;
+import net.kcww.app.robogen.common.helper.TextMatcher;
+import net.kcww.app.robogen.translator.helper.Tokens;
 import net.kcww.app.robogen.translator.model.selenium.SeleniumVerificationKeywordEnum;
+import net.kcww.app.robogen.translator.rule.AbstractVerificationRule;
 import org.springframework.stereotype.Service;
 
 // Verifies that current page contains text.
@@ -13,13 +14,9 @@ public final class PageShouldContainRule extends AbstractVerificationRule {
         super(SeleniumVerificationKeywordEnum.PAGE_SHOULD_CONTAIN);
     }
 
+    // Given the page contains "Hotel Booking" header
     @Override
-    public boolean isApplicable(RelationModel relationModel) {
-        return false;
-    }
-
-    @Override
-    public KeywordModel translate(RelationModel relationModel) {
-        return null;
+    protected boolean matchesTokenCondition(String text) {
+        return TextMatcher.containsPattern(text, Tokens.PAGE_PATTERNS);
     }
 }

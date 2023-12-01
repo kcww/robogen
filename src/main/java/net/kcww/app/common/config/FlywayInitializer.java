@@ -10,10 +10,9 @@ import javax.sql.DataSource;
 @Component
 public class FlywayInitializer extends AbstractFlywayInitializer {
 
-  @Autowired
-  public FlywayInitializer(@Value("${spring.datasource.flyway.locations}") String location,
-                           @Qualifier(DataSourceConfig.DATA_SOURCE_NAME) DataSource dataSource) {
-    super(location, dataSource);
-  }
-
+    @Autowired
+    public FlywayInitializer(@Value("${spring.datasource.flyway.locations}") String location,
+                             @Qualifier(DataSourceConfig.DATA_SOURCE_NAME) DataSource dataSource) {
+        super(location, dataSource);
+    }
 }

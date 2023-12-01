@@ -5,6 +5,7 @@ import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import net.kcww.app.common.entity.AbstractEntity;
 import org.hibernate.annotations.CreationTimestamp;
@@ -13,7 +14,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Data
-//@EqualsAndHashCode(of = "id")
+@EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 @Entity
 public class BookingInfo extends AbstractEntity {
@@ -39,7 +40,7 @@ public class BookingInfo extends AbstractEntity {
     @Max(value = 100)
     private Integer children;
 
-    @Column(name="smoking_preference", nullable = false)
+    @Column(name = "smoking_preference", nullable = false)
     @NotNull
     private Boolean smokingPref;
 

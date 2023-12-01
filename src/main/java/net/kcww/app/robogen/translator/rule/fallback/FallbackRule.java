@@ -30,7 +30,7 @@ public final class FallbackRule implements KeywordRule<RelationModel, KeywordMod
      */
     @Override
     public KeywordModel translate(RelationModel model) {
-        var stepText = model.getScenarioStep().getText();
+        var stepText = model.scenarioStep().text();
         var errorMessage = String.format("No Keyword found for Step: %s", stepText);
         log.info(errorMessage);
         return KeywordModel.builder().keyword(errorMessage).build();

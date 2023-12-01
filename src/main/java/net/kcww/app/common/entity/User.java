@@ -13,18 +13,17 @@ import java.util.Set;
 @Setter
 public class User extends AbstractUserEntity {
 
-  private String username;
-  private String name;
+    private String username;
+    private String name;
 
-  @JsonIgnore
-  private String hashedPassword;
+    @JsonIgnore
+    private String hashedPassword;
 
-  @Enumerated(EnumType.STRING)
-  @ElementCollection(fetch = FetchType.EAGER)
-  private Set<Role> roles;
+    @Enumerated(EnumType.STRING)
+    @ElementCollection(fetch = FetchType.EAGER)
+    private Set<Role> roles;
 
-  @Lob
-  @Column(length = 1000000)
-  private byte[] profilePicture;
-
+    @Lob
+    @Column(length = 1000000)
+    private byte[] profilePicture;
 }

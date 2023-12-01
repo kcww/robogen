@@ -7,6 +7,7 @@ package net.kcww.app.robogen.mapper.service;
  * @param <T> the type of the input to the map method.
  * @param <V> the type of the result produced by the map method.
  */
+@FunctionalInterface
 public interface MapperService<T, V> {
 
     /**

@@ -20,7 +20,6 @@ import net.kcww.app.hotel.entity.BookingConfirmation;
 import net.kcww.app.hotel.service.impl.BookingConfirmationServiceImpl;
 import org.springframework.data.domain.PageRequest;
 
-
 import java.util.Optional;
 
 @PageTitle("Hotel Room Booking Management")
@@ -30,87 +29,87 @@ import java.util.Optional;
 @JsModule("./views/roombookinglist/room-booking-list-view.ts")
 public class RoomBookingListView extends LitTemplate implements HasStyle, BeforeEnterObserver {
 
-  private final String BOOKING_ID = "bookingID";
-  private final String BOOKING_EDIT_ROUTE_TEMPLATE = "room-booking-management/%s/edit";
+    private final String BOOKING_ID = "bookingID";
+    private final String BOOKING_EDIT_ROUTE_TEMPLATE = "room-booking-management/%s/edit";
 
-  private @Id RoomBookingView bookingView;
-  private @Id Grid<BookingConfirmation> grid;
+    private @Id RoomBookingView bookingView;
+    private @Id Grid<BookingConfirmation> grid;
 
-  private final BookingConfirmationServiceImpl service;
-  private BookingConfirmation booking;
+    private final BookingConfirmationServiceImpl service;
+    private BookingConfirmation booking;
 
-  public RoomBookingListView(BookingConfirmationServiceImpl service) {
-    this.service = service;
-    addClassNames("room-booking-list-view");
+    public RoomBookingListView(BookingConfirmationServiceImpl service) {
+        this.service = service;
+        addClassNames("room-booking-list-view");
 
-    grid.addColumn(BookingConfirmation::getCreatedAt)
-      .setHeader("Created At")
-      .setSortProperty("createdAt")
-      .setAutoWidth(true);
-    grid.addColumn(booking -> booking.getUser().getFirstName())
-      .setHeader("First Name")
-      .setSortProperty("user.firstName")
-      .setAutoWidth(true);
-    grid.addColumn(booking -> booking.getUser().getLastName())
-      .setHeader("Last Name")
-      .setSortProperty("user.lastName")
-      .setAutoWidth(true);
-    grid.addColumn(booking -> booking.getUser().getEmail())
-      .setHeader("Email")
-      .setSortProperty("user.email")
-      .setAutoWidth(true);
-    grid.addColumn(booking -> booking.getUser().getPhone())
-      .setHeader("Phone")
-      .setSortProperty("user.phone")
-      .setAutoWidth(true);
+        grid.addColumn(BookingConfirmation::getCreatedAt)
+                .setHeader("Created At")
+                .setSortProperty("createdAt")
+                .setAutoWidth(true);
+        grid.addColumn(booking -> booking.getUser().getFirstName())
+                .setHeader("First Name")
+                .setSortProperty("user.firstName")
+                .setAutoWidth(true);
+        grid.addColumn(booking -> booking.getUser().getLastName())
+                .setHeader("Last Name")
+                .setSortProperty("user.lastName")
+                .setAutoWidth(true);
+        grid.addColumn(booking -> booking.getUser().getEmail())
+                .setHeader("Email")
+                .setSortProperty("user.email")
+                .setAutoWidth(true);
+        grid.addColumn(booking -> booking.getUser().getPhone())
+                .setHeader("Phone")
+                .setSortProperty("user.phone")
+                .setAutoWidth(true);
 
-    grid.setItems(query -> service.list(
-      PageRequest.of(query.getPage(), query.getPageSize(), VaadinSpringDataHelpers.toSpringDataSort(query))).stream());
+        grid.setItems(query -> service.list(
+                PageRequest.of(query.getPage(), query.getPageSize(), VaadinSpringDataHelpers.toSpringDataSort(query))).stream());
 
-    grid.addThemeVariants(GridVariant.LUMO_NO_BORDER);
-    grid.setHeightFull();
+        grid.addThemeVariants(GridVariant.LUMO_NO_BORDER);
+        grid.setHeightFull();
 
-    grid.asSingleSelect().addValueChangeListener(event -> {
-      if (event.getValue() != null) {
-        UI.getCurrent().navigate(String.format(BOOKING_EDIT_ROUTE_TEMPLATE, event.getValue().getId()));
-      } else {
-        clearForm();
-        UI.getCurrent().navigate(RoomBookingListView.class);
-      }
-    });
-  }
-
-  @Override
-  public void beforeEnter(BeforeEnterEvent event) {
-    Optional<Long> bookingID = event.getRouteParameters().getLong(BOOKING_ID);
-    if (bookingID.isPresent()) {
-      Optional<BookingConfirmation> bookingFromBackend = service.get(bookingID.get());
-      if (bookingFromBackend.isPresent()) {
-        populateForm(bookingFromBackend.get());
-      } else {
-        Notification.show(
-          String.format("The requested booking was not found, ID = %d", bookingID.get()), 3000,
-          Notification.Position.BOTTOM_START);
-        refreshGrid();
-        event.forwardTo(RoomBookingListView.class);
-      }
-    } else {
-      clearForm();
+        grid.asSingleSelect().addValueChangeListener(event -> {
+            if (event.getValue() != null) {
+                UI.getCurrent().navigate(String.format(BOOKING_EDIT_ROUTE_TEMPLATE, event.getValue().getId()));
+            } else {
+                clearForm();
+                UI.getCurrent().navigate(RoomBookingListView.class);
+            }
+        });
     }
-  }
 
-  private void refreshGrid() {
-    grid.select(null);
-    grid.getLazyDataView().refreshAll();
-  }
+    @Override
+    public void beforeEnter(BeforeEnterEvent event) {
+        Optional<Long> bookingID = event.getRouteParameters().getLong(BOOKING_ID);
+        if (bookingID.isPresent()) {
+            Optional<BookingConfirmation> bookingFromBackend = service.get(bookingID.get());
+            if (bookingFromBackend.isPresent()) {
+                populateForm(bookingFromBackend.get());
+            } else {
+                Notification.show(
+                        String.format("The requested booking was not found, ID = %d", bookingID.get()), 3000,
+                        Notification.Position.BOTTOM_START);
+                refreshGrid();
+                event.forwardTo(RoomBookingListView.class);
+            }
+        } else {
+            clearForm();
+        }
+    }
 
-  private void clearForm() {
-    populateForm(null);
-  }
+    private void refreshGrid() {
+        grid.select(null);
+        grid.getLazyDataView().refreshAll();
+    }
 
-  private void populateForm(BookingConfirmation booking) {
-    this.booking = booking;
-    bookingView.getBinder().readBean(this.booking);
-  }
+    private void clearForm() {
+        populateForm(null);
+    }
+
+    private void populateForm(BookingConfirmation booking) {
+        this.booking = booking;
+        bookingView.getBinder().readBean(this.booking);
+    }
 
 }

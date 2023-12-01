@@ -30,109 +30,109 @@ import java.util.Optional;
  */
 public class MainLayout extends AppLayout {
 
-  private H2 viewTitle;
+    private H2 viewTitle;
 
-  private AuthenticatedUser authenticatedUser;
-  private AccessAnnotationChecker accessChecker;
+    private AuthenticatedUser authenticatedUser;
+    private AccessAnnotationChecker accessChecker;
 
-  public MainLayout(AuthenticatedUser authenticatedUser, AccessAnnotationChecker accessChecker) {
-    this.authenticatedUser = authenticatedUser;
-    this.accessChecker = accessChecker;
+    public MainLayout(AuthenticatedUser authenticatedUser, AccessAnnotationChecker accessChecker) {
+        this.authenticatedUser = authenticatedUser;
+        this.accessChecker = accessChecker;
 
-    setPrimarySection(Section.DRAWER);
-    addDrawerContent();
-    addHeaderContent();
-  }
+        setPrimarySection(Section.DRAWER);
+        addDrawerContent();
+        addHeaderContent();
+    }
 
-  private void addHeaderContent() {
-    DrawerToggle toggle = new DrawerToggle();
-    toggle.setAriaLabel("Menu toggle");
+    private void addHeaderContent() {
+        DrawerToggle toggle = new DrawerToggle();
+        toggle.setAriaLabel("Menu toggle");
 
-    viewTitle = new H2();
-    viewTitle.addClassNames(LumoUtility.FontSize.LARGE, LumoUtility.Margin.NONE);
+        viewTitle = new H2();
+        viewTitle.addClassNames(LumoUtility.FontSize.LARGE, LumoUtility.Margin.NONE);
 
-    addToNavbar(true, toggle, viewTitle);
-  }
+        addToNavbar(true, toggle, viewTitle);
+    }
 
-  private void addDrawerContent() {
-    H1 appName = new H1("WebApp");
-    appName.addClassNames(LumoUtility.FontSize.LARGE, LumoUtility.Margin.NONE);
-    Header header = new Header(appName);
+    private void addDrawerContent() {
+        H1 appName = new H1("WebApp");
+        appName.addClassNames(LumoUtility.FontSize.LARGE, LumoUtility.Margin.NONE);
+        Header header = new Header(appName);
 
-    Scroller scroller = new Scroller(createNavigation());
+        Scroller scroller = new Scroller(createNavigation());
 
-    addToDrawer(header, scroller, createFooter());
-  }
+        addToDrawer(header, scroller, createFooter());
+    }
 
-  private SideNav createNavigation() {
-    SideNav nav = new SideNav();
+    private SideNav createNavigation() {
+        SideNav nav = new SideNav();
 
 //    if (accessChecker.hasAccess(HelloWorldView.class)) {
 //      nav.addItem(new SideNavItem("Hello World", HelloWorldView.class, LineAwesomeIcon.GLOBE_SOLID.create()));
 //    }
-    if (accessChecker.hasAccess(RoomBookingView.class)) {
-      nav.addItem(new SideNavItem("Room Booking", RoomBookingView.class, LineAwesomeIcon.BOOK_SOLID.create()));
-    }
-    if (accessChecker.hasAccess(RoomBookingListView.class)) {
-      nav.addItem(new SideNavItem("Room Booking Management", RoomBookingListView.class, LineAwesomeIcon.BOOK_SOLID.create()));
-    }
-    if (accessChecker.hasAccess(RoboGenView.class)) {
-      nav.addItem(new SideNavItem("TestScript Generator", RoboGenView.class, LineAwesomeIcon.FILE.create()));
-    }
-    if (accessChecker.hasAccess(AboutView.class)) {
-      nav.addItem(new SideNavItem("About", AboutView.class, LineAwesomeIcon.FILE.create()));
-    }
+        if (accessChecker.hasAccess(RoomBookingView.class)) {
+            nav.addItem(new SideNavItem("Room Booking", RoomBookingView.class, LineAwesomeIcon.BOOK_SOLID.create()));
+        }
+        if (accessChecker.hasAccess(RoomBookingListView.class)) {
+            nav.addItem(new SideNavItem("Room Booking Management", RoomBookingListView.class, LineAwesomeIcon.BOOK_SOLID.create()));
+        }
+        if (accessChecker.hasAccess(RoboGenView.class)) {
+            nav.addItem(new SideNavItem("TestScript Generator", RoboGenView.class, LineAwesomeIcon.FILE.create()));
+        }
+        if (accessChecker.hasAccess(AboutView.class)) {
+            nav.addItem(new SideNavItem("About", AboutView.class, LineAwesomeIcon.FILE.create()));
+        }
 
-    return nav;
-  }
-
-  private Footer createFooter() {
-    Footer layout = new Footer();
-
-    Optional<User> maybeUser = authenticatedUser.get();
-    if (maybeUser.isPresent()) {
-      User user = maybeUser.get();
-
-      Avatar avatar = new Avatar(user.getName());
-      StreamResource resource = new StreamResource("profile-pic",
-        () -> new ByteArrayInputStream(user.getProfilePicture()));
-      avatar.setImageResource(resource);
-      avatar.setThemeName("xsmall");
-      avatar.getElement().setAttribute("tabindex", "-1");
-
-      MenuBar userMenu = new MenuBar();
-      userMenu.setThemeName("tertiary-inline contrast");
-
-      MenuItem userName = userMenu.addItem("");
-      Div div = new Div();
-      div.add(avatar);
-      div.add(user.getName());
-      div.add(new Icon("lumo", "dropdown"));
-      div.getElement().getStyle().set("display", "flex");
-      div.getElement().getStyle().set("align-items", "center");
-      div.getElement().getStyle().set("gap", "var(--lumo-space-s)");
-      userName.add(div);
-      userName.getSubMenu().addItem("Sign out", e -> {
-        authenticatedUser.logout();
-      });
-
-      layout.add(userMenu);
-    } else {
-      Anchor loginLink = new Anchor("login", "Sign in");
-      layout.add(loginLink);
+        return nav;
     }
 
-    return layout;
-  }
+    private Footer createFooter() {
+        Footer layout = new Footer();
 
-  @Override
-  protected void afterNavigation() {
-    super.afterNavigation();
-    viewTitle.setText(getCurrentPageTitle());
-  }
+        Optional<User> maybeUser = authenticatedUser.get();
+        if (maybeUser.isPresent()) {
+            User user = maybeUser.get();
 
-  private String getCurrentPageTitle() {
-    PageTitle title = getContent().getClass().getAnnotation(PageTitle.class);
-    return title == null ? "" : title.value();
-  }
+            Avatar avatar = new Avatar(user.getName());
+            StreamResource resource = new StreamResource("profile-pic",
+                    () -> new ByteArrayInputStream(user.getProfilePicture()));
+            avatar.setImageResource(resource);
+            avatar.setThemeName("xsmall");
+            avatar.getElement().setAttribute("tabindex", "-1");
+
+            MenuBar userMenu = new MenuBar();
+            userMenu.setThemeName("tertiary-inline contrast");
+
+            MenuItem userName = userMenu.addItem("");
+            Div div = new Div();
+            div.add(avatar);
+            div.add(user.getName());
+            div.add(new Icon("lumo", "dropdown"));
+            div.getElement().getStyle().set("display", "flex");
+            div.getElement().getStyle().set("align-items", "center");
+            div.getElement().getStyle().set("gap", "var(--lumo-space-s)");
+            userName.add(div);
+            userName.getSubMenu().addItem("Sign out", e -> {
+                authenticatedUser.logout();
+            });
+
+            layout.add(userMenu);
+        } else {
+            Anchor loginLink = new Anchor("login", "Sign in");
+            layout.add(loginLink);
+        }
+
+        return layout;
+    }
+
+    @Override
+    protected void afterNavigation() {
+        super.afterNavigation();
+        viewTitle.setText(getCurrentPageTitle());
+    }
+
+    private String getCurrentPageTitle() {
+        PageTitle title = getContent().getClass().getAnnotation(PageTitle.class);
+        return title == null ? "" : title.value();
+    }
 }

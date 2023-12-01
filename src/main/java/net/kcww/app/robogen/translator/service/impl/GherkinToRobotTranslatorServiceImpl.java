@@ -30,6 +30,7 @@ public class GherkinToRobotTranslatorServiceImpl implements TranslatorService<Re
     public KeywordModel translate(RelationModel relationModel) {
         return rules.stream()
                 .filter(rule -> rule.isApplicable(relationModel))
+                // TODO: Case multiple rules matched.
                 .findFirst()
                 .map(rule -> rule.translate(relationModel))
                 .orElseGet(() -> FALLBACK_RULE.translate(relationModel));

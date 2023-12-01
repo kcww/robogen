@@ -8,15 +8,16 @@ import org.springframework.data.jpa.domain.Specification;
 import java.util.Optional;
 
 public interface UserService {
-  Optional<User> get(Long id);
 
-  User update(User entity);
+    Optional<User> get(Long id);
 
-  void delete(Long id);
+    User update(User entity);
 
-  Page<User> list(Pageable pageable);
+    void delete(Long id);
 
-  Page<User> list(Pageable pageable, Specification<User> filter);
+    Page<User> list(Pageable pageable);
 
-  int count();
+    Page<User> list(Pageable pageable, Specification<User> filter);
+
+    int count();
 }

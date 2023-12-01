@@ -44,8 +44,8 @@ public enum GwtWidgetEnum implements Widget {
     RICHTEXTAREA("RichTextArea", getAptSeleniumKeywords(Element.TEXT)),
     SUGGESTBOX("SuggestBox", getAptSeleniumKeywords(Element.TEXT)),
     TEXTBOX("TextBox", getAptSeleniumKeywords(Element.TEXT)),
-    TEXTAREA("TextArea", getAptSeleniumKeywords(Element.TEXT));
+    TEXTAREA("TextArea", getAptSeleniumKeywords(Element.TEXTAREA));
 
-    private final String tag;
+    private final String tagName;
     private final Set<SeleniumKeyword> aptKeywords;
 }

@@ -18,33 +18,33 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class PersonalDetailsServiceImpl implements PersonalDetailsService {
 
-  private final @NonNull PersonalDetailRepository repository;
+    private final @NonNull PersonalDetailRepository repository;
 
-  @Override
-  public Optional<PersonalDetail> get(Long id) {
-    return repository.findById(id);
-  }
+    @Override
+    public Optional<PersonalDetail> get(Long id) {
+        return repository.findById(id);
+    }
 
-  @Override
-  @Transactional(HotelDataSourceConfig.TRANSACTION_MANAGER_NAME)
-  public PersonalDetail save(PersonalDetail entity) {
-    return repository.save(entity);
-  }
+    @Override
+    @Transactional(HotelDataSourceConfig.TRANSACTION_MANAGER_NAME)
+    public PersonalDetail save(PersonalDetail entity) {
+        return repository.save(entity);
+    }
 
-  @Override
-  @Transactional(HotelDataSourceConfig.TRANSACTION_MANAGER_NAME)
-  public void delete(Long id) {
-    repository.deleteById(id);
-  }
+    @Override
+    @Transactional(HotelDataSourceConfig.TRANSACTION_MANAGER_NAME)
+    public void delete(Long id) {
+        repository.deleteById(id);
+    }
 
-  @Override
-  public Page<PersonalDetail> list(Pageable pageable) {
-    return repository.findAll(pageable);
-  }
+    @Override
+    public Page<PersonalDetail> list(Pageable pageable) {
+        return repository.findAll(pageable);
+    }
 
-  @Override
-  public Page<PersonalDetail> list(Pageable pageable, Specification<PersonalDetail> filter) {
-    return repository.findAll(filter, pageable);
-  }
+    @Override
+    public Page<PersonalDetail> list(Pageable pageable, Specification<PersonalDetail> filter) {
+        return repository.findAll(filter, pageable);
+    }
 
 }

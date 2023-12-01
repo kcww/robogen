@@ -3,7 +3,7 @@ package net.kcww.app.robogen.parser.service.impl;
 import io.cucumber.gherkin.GherkinParser;
 import io.cucumber.messages.types.*;
 import lombok.extern.slf4j.Slf4j;
-import net.kcww.app.robogen.common.helper.KeyMatcher;
+import net.kcww.app.robogen.common.helper.TextMatcher;
 import net.kcww.app.robogen.parser.exception.GherkinParsingException;
 import net.kcww.app.robogen.parser.model.GherkinModel;
 import net.kcww.app.robogen.parser.model.ScenarioStepModel;
@@ -12,8 +12,9 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Service implementation for parsing Gherkin files. This service processes
@@ -35,21 +36,14 @@ public class GherkinParserServiceImpl implements ParserService<InputStream, Gher
     @Override
     public GherkinModel parse(InputStream inputStream) throws GherkinParsingException {
         try {
-            return parseGherkinDocument(inputStream).orElseThrow(() ->
-                    new GherkinParsingException("Failed to parse Gherkin document"));
+            return parseGherkinDocument(inputStream)
+                    .orElseThrow(() -> new GherkinParsingException("Failed to parse Gherkin document"));
         } catch (IOException e) {
             log.error("IOException occurred while parsing the Gherkin document", e);
             throw new GherkinParsingException("IOException occurred while parsing the Gherkin document", e);
         }
     }
 
-    /**
-     * Parses the Gherkin document from an InputStream and converts it to a GherkinModel.
-     *
-     * @param inputStream the input stream of the Gherkin file.
-     * @return an Optional containing a GherkinModel if parsing is successful.
-     * @throws IOException if an IO error occurs during parsing.
-     */
     private Optional<GherkinModel> parseGherkinDocument(InputStream inputStream) throws IOException {
         return parser.parse("", inputStream)
                 .map(Envelope::getGherkinDocument)
@@ -58,64 +52,54 @@ public class GherkinParserServiceImpl implements ParserService<InputStream, Gher
                 .map(this::buildGherkinModel);
     }
 
-    /**
-     * Builds the GherkinModel from a GherkinDocument.
-     *
-     * @param doc the GherkinDocument object.
-     * @return a GherkinModel built from the GherkinDocument.
-     */
     private GherkinModel buildGherkinModel(GherkinDocument doc) {
-        var builder = GherkinModel.builder().gherkinDocument(doc);
+        var builder = GherkinModel.builder().document(doc);
+
         doc.getFeature().ifPresent(feature -> {
             builder.featureName(feature.getName());
             builder.featureDescription(feature.getDescription());
+
             feature.getChildren().stream()
                     .map(FeatureChild::getScenario)
                     .flatMap(Optional::stream)
                     .findFirst()
                     .ifPresent(scenario -> {
                         builder.scenarioName(scenario.getName());
-
+                        builder.scenarioSteps(processScenarioSteps(scenario));
                     });
         });
-        var model = builder.build();
-//        correctKeywordTypes(model);
-        return model;
+        return builder.build();
     }
 
-    private List<ScenarioStepModel> processScenario(Scenario scenario) {
-        var steps =scenario.getSteps().stream()
+    private Set<ScenarioStepModel> processScenarioSteps(Scenario scenario) {
+        var steps = scenario.getSteps().stream()
                 .map(this::buildScenarioStepModel)
-                .sorted(ScenarioStepModel::compareTo)
-                .toList();
-
-        return changeConjunctionTypeToItsPredecessorType(steps);
+                .collect(Collectors.toUnmodifiableSet());
+        return changeStepConjunctionTypeToItsPredecessorType(steps);
     }
 
     private ScenarioStepModel buildScenarioStepModel(Step step) {
         var builder = ScenarioStepModel.builder().order(step.getLocation().getLine());
-
-        step.getKeywordType().ifPresent(builder::stepKeywordType);
+        step.getKeywordType().ifPresent(builder::type);
 
         var text = step.getText();
-        if (!text.isBlank()) {
-            builder.text(text);
-            builder.id(KeyMatcher.extractXmlElementIdFromScenarioStepText(text));
-//            builder.value(KeyMatcher.extractValueFromScenarioStepText(text));
-        }
+        builder.text(text);
+        builder.parameters(TextMatcher.extractScenarioStepParameters(text));
+        builder.literals(TextMatcher.extractScenarioStepLiterals(text));
+
         return builder.build();
     }
 
-    private List<ScenarioStepModel> changeConjunctionTypeToItsPredecessorType(List<ScenarioStepModel> steps) {
+    private Set<ScenarioStepModel> changeStepConjunctionTypeToItsPredecessorType(Set<ScenarioStepModel> steps) {
         if (steps.isEmpty() || steps.size() == 1) return steps;
 
         StepKeywordType lastKeywordType = null;
         for (var step : steps) {
-            var currentKeywordType = step.getStepKeywordType();
+            var currentKeywordType = step.type();
             if (StepKeywordType.CONJUNCTION != currentKeywordType) {
                 lastKeywordType = currentKeywordType;
             } else if (lastKeywordType != null) {
-                step.setStepKeywordType(lastKeywordType);
+                step.type(lastKeywordType);
             }
         }
         return steps;

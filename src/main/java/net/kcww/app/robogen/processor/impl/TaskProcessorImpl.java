@@ -31,6 +31,7 @@ public class TaskProcessorImpl implements TaskProcessor<UserInput> {
     public void process(UserInput userInput) {
         var parsedData = parse(userInput);
         var relations = map(parsedData);
+//        log.info(relations.toString());
         var keywords = translate(relations);
         var script = compose(keywords);
         log.info("Generated Robot Framework script:\n{}", script);

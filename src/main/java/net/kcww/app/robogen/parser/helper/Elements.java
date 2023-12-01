@@ -21,22 +21,14 @@ public final class Elements {
                 .map(Element.class::cast);
     }
 
-    /**
-     * Strips the namespace prefix.
-     *
-     * @param name The fully qualified name.
-     * @return The local part of the name.
-     */
     public static String stripPrefix(String name) {
         return name.contains(":") ? name.substring(name.indexOf(':') + 1) : name;
     }
 
-    public static <T> void setAttributeIfPresent(Element element,
-                                                 String attributeName,
-                                                 Function<String, T> mapper,
-                                                 Consumer<T> setter) {
+    public static <T> void setAttributeIfPresent(Element element, String attrName,
+                                                 Function<String, T> mapper, Consumer<T> setter) {
 
-        Optional.of(element.getAttribute(attributeName))
+        Optional.of(element.getAttribute(attrName))
                 .filter(value -> !value.isBlank())
                 .map(mapper)
                 .ifPresent(setter);

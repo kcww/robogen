@@ -2,8 +2,8 @@ package net.kcww.app.robogen.parser.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import net.kcww.app.robogen.parser.exception.XsdParsingException;
-import net.kcww.app.robogen.parser.helper.XsdElements;
-import net.kcww.app.robogen.parser.helper.XsdSimpleTypes;
+import net.kcww.app.robogen.parser.helper.Elements;
+import net.kcww.app.robogen.parser.helper.XsdRestrictions;
 import net.kcww.app.robogen.parser.model.XsdElementModel;
 import org.springframework.stereotype.Service;
 import org.w3c.dom.Document;
@@ -13,11 +13,15 @@ import org.xml.sax.SAXException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static net.kcww.app.robogen.parser.helper.Elements.setAttributeIfPresent;
 import static net.kcww.app.robogen.parser.helper.Elements.toStream;
+import static net.kcww.app.robogen.parser.model.XsdAttributeEnum.*;
 import static net.kcww.app.robogen.parser.model.XsdElementEnum.ELEMENT;
+import static net.kcww.app.robogen.parser.model.XsdElementEnum.SIMPLE_TYPE;
 
 /**
  * Service implementation for parsing XSD (XML Schema Definition) files.
@@ -39,30 +43,43 @@ public class XsdParserServiceImpl extends AbstractParserService<List<XsdElementM
             Document document = buildDocument(inputStream);
             return extractElements(document);
         } catch (IOException | SAXException e) {
+            log.error("Error parsing XSD input stream", e);
             throw new XsdParsingException("Failed to parse XSD input stream", e);
         }
     }
 
-    /**
-     * Extracts XSD elements from a given Document and maps them to XsdElementModel.
-     *
-     * @param document the Document object representing the XSD content.
-     * @return a list of XsdElementModel instances.
-     */
     private List<XsdElementModel> extractElements(Document document) {
         return streamElements(document)
-                .filter(XsdSimpleTypes::hasSimpleTypeAsDirectChild)
-                .map(XsdElements::create)
+                .filter(this::hasSimpleTypeAsDirectChild)
+                .map(this::createXsdElementModel)
                 .collect(Collectors.toList());
     }
 
-    /**
-     * Creates a stream of Element objects from the given Document.
-     *
-     * @param document the Document object representing the XSD content.
-     * @return a stream of Element objects.
-     */
     private Stream<Element> streamElements(Document document) {
-        return toStream(document.getElementsByTagNameNS(WILD_CARD, ELEMENT.getName()));
+        return toStream(document.getElementsByTagNameNS(WILD_CARD, ELEMENT.tagName()));
+    }
+
+    // To check if the element has a SimpleType element as a direct child
+    public boolean hasSimpleTypeAsDirectChild(Element element) {
+        return toStream(element.getChildNodes()).anyMatch(child -> SIMPLE_TYPE.tagName().equals(child.getLocalName()));
+    }
+
+    public XsdElementModel createXsdElementModel(Element element) {
+        XsdElementModel model = new XsdElementModel();
+        populateAttributes(element, model);
+        populateRestriction(element, model);
+        return model;
+    }
+
+    private void populateAttributes(Element element, XsdElementModel model) {
+        setAttributeIfPresent(element, NAME.attrName(), Function.identity(), model::name);
+        setAttributeIfPresent(element, TYPE.attrName(), Elements::stripPrefix, model::type);
+        setAttributeIfPresent(element, NILLABLE.attrName(), Boolean::valueOf, model::nillable);
+        setAttributeIfPresent(element, MIN_OCCURS.attrName(), Integer::valueOf, model::minOccurs);
+        setAttributeIfPresent(element, MAX_OCCURS.attrName(), Integer::valueOf, model::maxOccurs);
+    }
+
+    private void populateRestriction(Element element, XsdElementModel model) {
+        XsdRestrictions.get(element).ifPresent(model::restriction);
     }
 }
