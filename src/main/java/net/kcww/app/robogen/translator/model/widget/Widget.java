@@ -1,12 +1,11 @@
 package net.kcww.app.robogen.translator.model.widget;
 
-import java.util.Set;
-
 public interface Widget {
 
-    // Widget's tag name
-    String tagName();
+    enum Type {
+        BUTTON, CHECKBOX, FILE_UPLOAD, IMAGE, LINK, LIST, PASSWORD, RADIO, TEXT, TEXT_AREA
+    }
 
-    // Relevant Selenium keywords for this Widget
-    <T> Set<? extends T> aptKeywords();
+    String tagName();
+    Widget.Type type();
 }

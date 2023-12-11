@@ -1,14 +1,16 @@
 package net.kcww.app.robogen.translator.model.selenium;
 
+import lombok.Builder;
+
 public interface SeleniumKeyword {
 
+    enum Type {
+        ACTION, VERIFICATION, BROWSER
+    }
+
     String keyword();
-    boolean hasLocator();
-    boolean hasArgument();
+    Properties properties();
 
-    boolean HAS_LOC = true;
-    boolean NO_LOC = false;
-    boolean HAS_ARG = true;
-    boolean NO_ARG = false;
-
+    @Builder
+    record Properties(SeleniumKeyword.Type type, boolean hasLocator, boolean hasArgument) {}
 }

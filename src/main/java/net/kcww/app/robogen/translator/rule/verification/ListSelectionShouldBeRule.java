@@ -1,24 +1,23 @@
 package net.kcww.app.robogen.translator.rule.verification;
 
-import net.kcww.app.robogen.translator.helper.Tokens;
-import net.kcww.app.robogen.translator.model.selenium.SeleniumElementVerificationKeywordEnum;
-import net.kcww.app.robogen.translator.rule.AbstractElementVerificationRule;
+import net.kcww.app.robogen.mapper.model.RelationModel;
+import net.kcww.app.robogen.translator.helper.Words;
+import net.kcww.app.robogen.translator.model.selenium.SeleniumKeyword;
+import net.kcww.app.robogen.translator.model.selenium.SeleniumKeywordEnum;
+import net.kcww.app.robogen.translator.rule.AbstractElementRule;
 import org.springframework.stereotype.Service;
 
 @Service
-public final class ListSelectionShouldBeRule extends AbstractElementVerificationRule {
+public final class ListSelectionShouldBeRule extends AbstractElementRule {
 
-    ListSelectionShouldBeRule() {
-        super(SeleniumElementVerificationKeywordEnum.LIST_SELECTION_SHOULD_BE);
+    public static final SeleniumKeyword KEYWORD = SeleniumKeywordEnum.LIST_SELECTION_SHOULD_BE;
+
+    public ListSelectionShouldBeRule() {
+        super(KEYWORD);
     }
 
-    // Given <list> is selected to "Single",         return true;
-    // Given <list> is not unselected to "Single",   return true;    -- weired :(
-    // Given <list> is unselected,                   return false;
-    // Given <list> is not selected,                 return false;
-    // Given none of <list> is selected,             return false;
     @Override
-    protected boolean matchesTokenCondition(String text) {
-        return Tokens.isSelectAction(text);
+    public boolean isApplicable(RelationModel relation) {
+        return super.isApplicable(relation) && Words.hasSelection(relation.scenarioStep().text());
     }
 }

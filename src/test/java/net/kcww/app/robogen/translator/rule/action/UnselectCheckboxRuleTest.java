@@ -1,10 +1,9 @@
 package net.kcww.app.robogen.translator.rule.action;
 
-import io.cucumber.messages.types.StepKeywordType;
-import net.kcww.app.robogen.mapper.model.RelationModel;
-import net.kcww.app.robogen.translator.model.widget.GwtWidgetEnum;
-import net.kcww.app.robogen.translator.model.widget.VaadinWidgetEnum;
-import net.kcww.app.robogen.translator.model.widget.Widget;
+import net.kcww.app.robogen.translator.helper.DataProvider;
+import net.kcww.app.robogen.translator.helper.RelationModelStub;
+import net.kcww.app.robogen.translator.rule.AbstractElementRuleTest;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -15,70 +14,73 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.Set;
 import java.util.stream.Stream;
 
-import static io.cucumber.messages.types.StepKeywordType.*;
-
 @ExtendWith(MockitoExtension.class)
-class UnselectCheckboxRuleTest extends AbstractActionRuleTest {
+class UnselectCheckboxRuleTest extends AbstractElementRuleTest {
 
     @InjectMocks
-    private UnselectCheckboxRule unselectCheckboxRule;
+    private UnselectCheckboxRule rule;
 
     @ParameterizedTest
-    @MethodSource("applicableTestCases")
-    public void isApplicableTest(RelationModel relation) {
-        runApplicableTest(relation, mock -> unselectCheckboxRule.isApplicable(mock));
+    @MethodSource("elicitableRelationTestCases")
+    public void elicitableRelationTest(RelationModelStub relationStub) {
+        runTest(rule, relationStub, true);
+    }
+
+    @Test
+    public void relationWithNoWidgetTest() {
+        runTest(rule, null, false);
     }
 
     @ParameterizedTest
-    @MethodSource("inapplicableTestCases")
-    public void isInapplicableTest(RelationModel relation) {
-        runInapplicableActionTest(relation, mock -> unselectCheckboxRule.isApplicable(mock));
+    @MethodSource("relationWithInaptStepTypeTestCases")
+    public void relationWithInaptStepTypeTest(RelationModelStub relationStub) {
+        runTest(rule, relationStub, false);
     }
 
-    private static Set<String> aptStepTexts = Set.of(
-            "And I unselect <termsAgreed>",
-            "And I deselect <termsAgreed>",
-            "And I uncheck <termsAgreed>",
-            "And I do not check <termsAgreed>",
-            "And I don't check <termsAgreed>"
-    );
-
-    private static Set<String> inaptStepTexts = Set.of(
-            "And I select <termsAgreed>",
-            "And I check <termsAgreed>",
-            "And I choose <termsAgreed>",
-            "And I do not uncheck <termsAgreed>",
-            "And I don't uncheck <termsAgreed>"
-    );
-
-    private static Set<Widget> widgets = Set.of(
-            GwtWidgetEnum.CHECKBOX,
-            GwtWidgetEnum.SIMPLE_CHECKBOX,
-            VaadinWidgetEnum.CHECKBOX
-    );
-
-    private static Stream<Arguments> applicableTestCases() {
-        return widgets.stream().flatMap(widget -> aptStepTexts.stream().map(text -> buildRelation(ACTION, text, widget)));
+    @ParameterizedTest
+    @MethodSource("relationWithIrrelevantWidgetTestCases")
+    public void relationWithIrrelevantWidgetTest(RelationModelStub relationStub) {
+        runTest(rule, relationStub, false);
     }
 
-    private static Stream<Arguments> inapplicableTestCases() {
-        var aptStepTextNonActionCases = widgets.stream().flatMap(widget -> aptStepTexts.stream()
-                .flatMap(text -> Stream.of(buildRelation(CONTEXT, text, widget), buildRelation(OUTCOME, text, widget))));
+    @ParameterizedTest
+    @MethodSource("relationWithInaptStepTextTestCases")
+    public void relationWithInaptStepTextTest(RelationModelStub relationStub) {
+        runTest(rule, relationStub, false);
+    }
 
-        var inaptStepTextActionCases = widgets.stream().flatMap(widget -> inaptStepTexts.stream()
-                .flatMap(text -> Stream.of(buildRelation(ACTION, text, widget))));
+    private static final Set<String> aptStepTexts = Set.of(
+            "When I unselect <termsAgreed>",
+            "When I deselect <termsAgreed>",
+            "When I uncheck <termsAgreed>",
+            "When I do not check <termsAgreed>",
+            "When I don't check <termsAgreed>"
+    );
 
-        var noWidgetCases = Stream.of(StepKeywordType.values()).map(stepType -> buildRelation(stepType));
+    private static final Set<String> inaptStepTexts = Set.of(
+            "When I select <termsAgreed>",
+            "When I check <termsAgreed>",
+            "When I choose <termsAgreed>",
+            "When I do not uncheck <termsAgreed>",
+            "When I don't uncheck <termsAgreed>"
+    );
 
-        var differentWidgetCases = Stream.concat(
-                Stream.of(GwtWidgetEnum.values()).filter(widget -> !widgets.contains(widget))
-                        .map(widget -> buildRelation(ACTION, widget)),
-                Stream.of(VaadinWidgetEnum.values()).filter(widget -> !widgets.contains(widget))
-                        .map(widget -> buildRelation(ACTION, widget))
-        );
+    private static Stream<Arguments> elicitableRelationTestCases() {
+        return DataProvider.generateRelationStubsForAction(
+                UnselectCheckboxRule.KEYWORD, aptStepTexts);
+    }
 
-        var stepTextCases = Stream.concat(aptStepTextNonActionCases, inaptStepTextActionCases);
-        var otherWidgetCases = Stream.concat(noWidgetCases, differentWidgetCases);
-        return Stream.concat(stepTextCases, otherWidgetCases);
+    private static Stream<Arguments> relationWithInaptStepTypeTestCases() {
+        return DataProvider.generateRelationStubsWithInaptStepTypeForAction();
+    }
+
+    private static Stream<Arguments> relationWithIrrelevantWidgetTestCases() {
+        return DataProvider.generateRelationStubsWithIrrelevantWidgetForAction(
+                UnselectCheckboxRule.KEYWORD);
+    }
+
+    private static Stream<Arguments> relationWithInaptStepTextTestCases() {
+        return DataProvider.generateRelationStubsForAction(
+                UnselectCheckboxRule.KEYWORD, inaptStepTexts);
     }
 }

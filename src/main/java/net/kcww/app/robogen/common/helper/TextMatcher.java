@@ -7,7 +7,6 @@ import lombok.extern.slf4j.Slf4j;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -27,28 +26,19 @@ public final class TextMatcher {
             "\\b(http(s?)://|www\\.)([-a-zA-Z0-9@:%_+.~#?&/=]*)",
             CASE_INSENSITIVE | MULTILINE | DOTALL);
 
-    public static boolean containsPattern(String statement, Set<Pattern> patterns) {
-        return patterns.stream().anyMatch(pattern -> pattern.matcher(statement).find());
-    }
-
     public static List<String> extractScenarioStepParameters(String text) {
         var normalizedText = normalize(text);
         return extractMatches(ANGLE_BRACKETS_PATTERN, normalizedText, 1);
     }
 
-    public static Optional<String> extractScenarioStepId(String text, String token) {
-        var normalizedText = normalize(text);
-        var normalizedToken = normalize(token);
-        var pattern = Pattern.compile("\\b" + Pattern.quote(normalizedToken) + "\\b", CASE_INSENSITIVE);
-        return pattern.matcher(normalizedText).find() ? Optional.of(token) : Optional.empty();
+    public static Optional<String> extractScenarioStepId(String text, String xmlElementId) {
+        var normalizedId = normalize(xmlElementId);
+        var pattern = Pattern.compile("\\b" + Pattern.quote(normalizedId) + "\\b", CASE_INSENSITIVE);
+        return pattern.matcher(text).find() ? Optional.of(normalizedId) : Optional.empty();
     }
 
     public static List<String> extractScenarioStepLiterals(String text) {
         return extractMatches(DOUBLE_QUOTES_OR_CURLY_BRACKETS_PATTERN, text, 1);
-    }
-
-    public static boolean containsUrl(String text) {
-        return URL_PATTERN.matcher(text).find();
     }
 
     public static List<String> extractUrls(String text) {

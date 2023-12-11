@@ -1,24 +1,23 @@
 package net.kcww.app.robogen.translator.rule.verification;
 
-import net.kcww.app.robogen.translator.model.selenium.SeleniumElementVerificationKeywordEnum;
-import net.kcww.app.robogen.translator.rule.AbstractElementVerificationRule;
+import net.kcww.app.robogen.mapper.model.RelationModel;
+import net.kcww.app.robogen.translator.helper.Words;
+import net.kcww.app.robogen.translator.model.selenium.SeleniumKeyword;
+import net.kcww.app.robogen.translator.model.selenium.SeleniumKeywordEnum;
+import net.kcww.app.robogen.translator.rule.AbstractElementRule;
 import org.springframework.stereotype.Service;
 
-import static net.kcww.app.robogen.translator.helper.Tokens.isEnableState;
-
 @Service
-public class ElementShouldBeEnabledRule extends AbstractElementVerificationRule {
+public class ElementShouldBeEnabledRule extends AbstractElementRule {
 
-    ElementShouldBeEnabledRule() {
-        super(SeleniumElementVerificationKeywordEnum.ELEMENT_SHOULD_BE_ENABLED);
+    public static final SeleniumKeyword KEYWORD = SeleniumKeywordEnum.ELEMENT_SHOULD_BE_ENABLED;
+
+    public ElementShouldBeEnabledRule() {
+        super(KEYWORD);
     }
 
-    // Given <element> is enabled,          return true;
-    // Given <element> is not disabled,     return true;
-    // Given <element> is disabled,         return false;
-    // Given <element> is not enabled,      return false;
     @Override
-    protected boolean matchesTokenCondition(String text) {
-        return isEnableState(text);
+    public boolean isApplicable(RelationModel relation) {
+        return super.isApplicable(relation) && Words.hasEnable(relation.scenarioStep().text());
     }
 }

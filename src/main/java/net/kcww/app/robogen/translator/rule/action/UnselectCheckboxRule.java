@@ -1,23 +1,23 @@
 package net.kcww.app.robogen.translator.rule.action;
 
-import net.kcww.app.robogen.translator.helper.Tokens;
-import net.kcww.app.robogen.translator.model.selenium.SeleniumElementActionKeywordEnum;
-import net.kcww.app.robogen.translator.rule.AbstractElementActionRule;
+import net.kcww.app.robogen.mapper.model.RelationModel;
+import net.kcww.app.robogen.translator.helper.Words;
+import net.kcww.app.robogen.translator.model.selenium.SeleniumKeyword;
+import net.kcww.app.robogen.translator.model.selenium.SeleniumKeywordEnum;
+import net.kcww.app.robogen.translator.rule.AbstractElementRule;
 import org.springframework.stereotype.Service;
 
 @Service
-public final class UnselectCheckboxRule extends AbstractElementActionRule {
+public final class UnselectCheckboxRule extends AbstractElementRule {
+
+    public static final SeleniumKeyword KEYWORD = SeleniumKeywordEnum.UNSELECT_CHECKBOX;
 
     public UnselectCheckboxRule() {
-        super(SeleniumElementActionKeywordEnum.UNSELECT_CHECKBOX);
+        super(KEYWORD);
     }
 
-    // When I unselect <checkbox>
-    // When I uncheck <checkbox>
-    // When I do not check <checkbox>
-    // When I don't check <checkbox>
     @Override
-    protected boolean matchesTokenCondition(String text) {
-        return Tokens.isUnselectAction(text);
+    public boolean isApplicable(RelationModel relation) {
+        return super.isApplicable(relation) && Words.hasDeselection(relation.scenarioStep().text());
     }
 }

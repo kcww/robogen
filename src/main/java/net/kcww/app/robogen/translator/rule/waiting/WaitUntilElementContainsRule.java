@@ -1,19 +1,23 @@
 package net.kcww.app.robogen.translator.rule.waiting;
 
-import net.kcww.app.robogen.translator.model.selenium.SeleniumWaitingKeywordEnum;
-import net.kcww.app.robogen.translator.rule.AbstractElementVerificationRule;
+import net.kcww.app.robogen.mapper.model.RelationModel;
+import net.kcww.app.robogen.translator.helper.Words;
+import net.kcww.app.robogen.translator.model.selenium.SeleniumKeyword;
+import net.kcww.app.robogen.translator.model.selenium.SeleniumKeywordEnum;
+import net.kcww.app.robogen.translator.rule.AbstractElementRule;
 import org.springframework.stereotype.Service;
 
-import static net.kcww.app.robogen.translator.helper.Tokens.isWaitingState;
-
 @Service
-public final class WaitUntilElementContainsRule extends AbstractElementVerificationRule {
+public final class WaitUntilElementContainsRule extends AbstractElementRule {
 
-    WaitUntilElementContainsRule() {
-        super(SeleniumWaitingKeywordEnum.WAIT_UNTIL_ELEMENT_CONTAINS);
+    public static final SeleniumKeyword KEYWORD = SeleniumKeywordEnum.WAIT_UNTIL_ELEMENT_CONTAINS;
+
+    public WaitUntilElementContainsRule() {
+        super(KEYWORD);
     }
 
-    protected boolean matchesTokenCondition(String text) {
-        return isWaitingState(text);
+    @Override
+    public boolean isApplicable(RelationModel relation) {
+        return super.isApplicable(relation) && Words.hasWait(relation.scenarioStep().text());
     }
 }

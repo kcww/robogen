@@ -1,24 +1,23 @@
 package net.kcww.app.robogen.translator.rule.verification;
 
-import net.kcww.app.robogen.translator.helper.Tokens;
-import net.kcww.app.robogen.translator.model.selenium.SeleniumElementVerificationKeywordEnum;
-import net.kcww.app.robogen.translator.rule.AbstractElementVerificationRule;
+import net.kcww.app.robogen.mapper.model.RelationModel;
+import net.kcww.app.robogen.translator.helper.Words;
+import net.kcww.app.robogen.translator.model.selenium.SeleniumKeyword;
+import net.kcww.app.robogen.translator.model.selenium.SeleniumKeywordEnum;
+import net.kcww.app.robogen.translator.rule.AbstractElementRule;
 import org.springframework.stereotype.Service;
 
 @Service
-public final class RadioButtonShouldNotBeSelectedRule extends AbstractElementVerificationRule {
+public final class RadioButtonShouldNotBeSelectedRule extends AbstractElementRule {
 
-    RadioButtonShouldNotBeSelectedRule() {
-        super(SeleniumElementVerificationKeywordEnum.RADIO_BUTTON_SHOULD_NOT_BE_SELECTED);
+    public static final SeleniumKeyword KEYWORD = SeleniumKeywordEnum.RADIO_BUTTON_SHOULD_NOT_BE_SELECTED;
+
+    public RadioButtonShouldNotBeSelectedRule() {
+        super(KEYWORD);
     }
 
-    // Given <radio> is unset,                  return true;
-    // Given <radio> is not set to "value",     return true;
-    // Given None of <radio> is set,            return true;
-    // Given <radio> is set to "value",         return false;
-    // Given <radio> is not unset to "value",   return false;    -- weired :(
     @Override
-    protected boolean matchesTokenCondition(String text) {
-        return Tokens.isUnselectAction(text);
+    public boolean isApplicable(RelationModel relation) {
+        return super.isApplicable(relation) && Words.hasDeselection(relation.scenarioStep().text());
     }
 }

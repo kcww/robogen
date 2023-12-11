@@ -15,12 +15,12 @@ import static net.kcww.app.robogen.composer.helper.Composers.NEW_LINE;
 @AllArgsConstructor
 public class RobotScriptComposerServiceImpl implements ComposerService<ComposingMaterialModel, String> {
 
-  @Override
-  public String compose(ComposingMaterialModel input) {
-    return String.join(NEW_LINE,
-                       new SettingSectionComposer().compose(input),
-                       new VariableSectionComposer().compose(input),
-                       new TestcaseSectionComposer().compose(input),
-                       new KeywordSectionComposer().compose(input));
-  }
+    @Override
+    public String compose(ComposingMaterialModel input) {
+        return String.join(NEW_LINE,
+                new SettingSectionComposer().compose(input),
+                new VariableSectionComposer().compose(input),
+                new TestcaseSectionComposer().compose(input),
+                new KeywordSectionComposer().compose(input));
+    }
 }

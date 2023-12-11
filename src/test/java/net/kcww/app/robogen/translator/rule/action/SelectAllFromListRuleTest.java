@@ -1,10 +1,9 @@
 package net.kcww.app.robogen.translator.rule.action;
 
-import io.cucumber.messages.types.StepKeywordType;
-import net.kcww.app.robogen.mapper.model.RelationModel;
-import net.kcww.app.robogen.translator.model.widget.GwtWidgetEnum;
-import net.kcww.app.robogen.translator.model.widget.VaadinWidgetEnum;
-import net.kcww.app.robogen.translator.model.widget.Widget;
+import net.kcww.app.robogen.translator.helper.DataProvider;
+import net.kcww.app.robogen.translator.helper.RelationModelStub;
+import net.kcww.app.robogen.translator.rule.AbstractElementRuleTest;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -15,68 +14,71 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.Set;
 import java.util.stream.Stream;
 
-import static io.cucumber.messages.types.StepKeywordType.*;
-
 @ExtendWith(MockitoExtension.class)
-public class SelectAllFromListRuleTest extends AbstractActionRuleTest {
+public class SelectAllFromListRuleTest extends AbstractElementRuleTest {
 
     @InjectMocks
-    private SelectAllFromListRule selectAllFromListRule;
+    private SelectAllFromListRule rule;
 
     @ParameterizedTest
-    @MethodSource("applicableTestCases")
-    public void isApplicableTest(RelationModel relation) {
-        runApplicableTest(relation, selectAllFromListRule::isApplicable);
+    @MethodSource("elicitableRelationTestCases")
+    public void elicitableRelationTest(RelationModelStub relationStub) {
+        runTest(rule, relationStub, true);
+    }
+
+    @Test
+    public void relationWithNoWidgetTest() {
+        runTest(rule, null, false);
     }
 
     @ParameterizedTest
-    @MethodSource("inapplicableTestCases")
-    public void isInapplicableTest(RelationModel relation) {
-        runInapplicableActionTest(relation, selectAllFromListRule::isApplicable);
+    @MethodSource("relationWithInaptStepTypeTestCases")
+    public void relationWithInaptStepTypeTest(RelationModelStub relationStub) {
+        runTest(rule, relationStub, false);
+    }
+
+    @ParameterizedTest
+    @MethodSource("relationWithIrrelevantWidgetTestCases")
+    public void relationWithIrrelevantWidgetTest(RelationModelStub relationStub) {
+        runTest(rule, relationStub, false);
+    }
+
+    @ParameterizedTest
+    @MethodSource("relationWithInaptStepTextTestCases")
+    public void relationWithInaptStepTextTest(RelationModelStub relationStub) {
+        runTest(rule, relationStub, false);
     }
 
     private static final Set<String> aptStepTexts = Set.of(
-            "And I select all <roomType>",
-            "And I select every <roomType>",
-            "And I do not unselect all <roomType>",
-            "And I don't unselect all <roomType>"
+            "When I select all <roomType>",
+            "When I select every <roomType>",
+            "When I do not unselect all <roomType>",
+            "When I don't unselect all <roomType>"
     );
 
     private static final Set<String> inaptStepTexts = Set.of(
-            "And I unselect all <roomType>",
-            "And I unselect every <roomType>",
-            "And I do not select all <roomType>",
-            "And I don't select all <roomType>"
+            "When I unselect all <roomType>",
+            "When I unselect every <roomType>",
+            "When I do not select all <roomType>",
+            "When I don't select all <roomType>"
     );
 
-    private static final Set<Widget> widgets = Set.of(
-            GwtWidgetEnum.LISTBOX,
-            VaadinWidgetEnum.COMBOBOX,
-            VaadinWidgetEnum.SELECT
-    );
-
-    private static Stream<Arguments> applicableTestCases() {
-        return widgets.stream().flatMap(widget -> aptStepTexts.stream().map(text -> buildRelation(ACTION, text, widget)));
+    private static Stream<Arguments> elicitableRelationTestCases() {
+        return DataProvider.generateRelationStubsForAction(
+                SelectAllFromListRule.KEYWORD, aptStepTexts);
     }
 
-    private static Stream<Arguments> inapplicableTestCases() {
-        var aptStepTextNonActionCases = widgets.stream().flatMap(widget -> aptStepTexts.stream()
-                .flatMap(text -> Stream.of(buildRelation(CONTEXT, text, widget), buildRelation(OUTCOME, text, widget))));
+    private static Stream<Arguments> relationWithInaptStepTypeTestCases() {
+        return DataProvider.generateRelationStubsWithInaptStepTypeForAction();
+    }
 
-        var inaptStepTextActionCases = widgets.stream().flatMap(widget -> inaptStepTexts.stream()
-                .flatMap(text -> Stream.of(buildRelation(ACTION, text, widget))));
+    private static Stream<Arguments> relationWithIrrelevantWidgetTestCases() {
+        return DataProvider.generateRelationStubsWithIrrelevantWidgetForAction(
+                SelectAllFromListRule.KEYWORD);
+    }
 
-        var noWidgetCases = Stream.of(StepKeywordType.values()).map(stepType -> buildRelation(stepType));
-
-        var differentWidgetCases = Stream.concat(
-                Stream.of(GwtWidgetEnum.values()).filter(widget -> !widgets.contains(widget))
-                        .map(widget -> buildRelation(ACTION, widget)),
-                Stream.of(VaadinWidgetEnum.values()).filter(widget -> !widgets.contains(widget))
-                        .map(widget -> buildRelation(ACTION, widget))
-        );
-
-        var stepTextCases = Stream.concat(aptStepTextNonActionCases, inaptStepTextActionCases);
-        var otherWidgetCases = Stream.concat(noWidgetCases, differentWidgetCases);
-        return Stream.concat(stepTextCases, otherWidgetCases);
+    private static Stream<Arguments> relationWithInaptStepTextTestCases() {
+        return DataProvider.generateRelationStubsForAction(
+                SelectAllFromListRule.KEYWORD, inaptStepTexts);
     }
 }

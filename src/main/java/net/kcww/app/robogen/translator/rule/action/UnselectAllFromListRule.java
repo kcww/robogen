@@ -1,19 +1,23 @@
 package net.kcww.app.robogen.translator.rule.action;
 
-import net.kcww.app.robogen.translator.helper.Tokens;
-import net.kcww.app.robogen.translator.model.selenium.SeleniumElementActionKeywordEnum;
-import net.kcww.app.robogen.translator.rule.AbstractElementActionRule;
+import net.kcww.app.robogen.mapper.model.RelationModel;
+import net.kcww.app.robogen.translator.helper.Words;
+import net.kcww.app.robogen.translator.model.selenium.SeleniumKeyword;
+import net.kcww.app.robogen.translator.model.selenium.SeleniumKeywordEnum;
+import net.kcww.app.robogen.translator.rule.AbstractElementRule;
 import org.springframework.stereotype.Service;
 
 @Service
-public final class UnselectAllFromListRule extends AbstractElementActionRule {
+public final class UnselectAllFromListRule extends AbstractElementRule {
+
+    public static final SeleniumKeyword KEYWORD = SeleniumKeywordEnum.UNSELECT_ALL_FROM_LIST;
 
     public UnselectAllFromListRule() {
-        super(SeleniumElementActionKeywordEnum.UNSELECT_ALL_FROM_LIST);
+        super(KEYWORD);
     }
 
     @Override
-    protected boolean matchesTokenCondition(String text) {
-        return Tokens.isUnselectAllAction(text);
+    public boolean isApplicable(RelationModel relation) {
+        return super.isApplicable(relation) && Words.hasWholeDeselection(relation.scenarioStep().text());
     }
 }

@@ -5,7 +5,6 @@ import lombok.NoArgsConstructor;
 import net.kcww.app.robogen.translator.model.KeywordModel;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)

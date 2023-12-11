@@ -2,7 +2,7 @@ package net.kcww.app.robogen.composer.service.impl.robot;
 
 import net.kcww.app.robogen.composer.model.ComposingMaterialModel;
 import net.kcww.app.robogen.composer.model.RobotEnum;
-import net.kcww.app.robogen.translator.model.selenium.SeleniumBrowserKeywordEnum;
+import net.kcww.app.robogen.translator.model.selenium.SeleniumKeywordEnum;
 
 import static net.kcww.app.robogen.composer.helper.Composers.*;
 
@@ -53,27 +53,27 @@ public class KeywordSectionComposer extends AbstractComposer {
     }
 
     private void openBrowser() {
-        newlineIndentedAppend(SeleniumBrowserKeywordEnum.OPEN_BROWSER.keyword()).indentedAppend(BLANK_PAGE).indentedAppend($_BROWSER);
+        newlineIndentedAppend(SeleniumKeywordEnum.OPEN_BROWSER.keyword()).indentedAppend(BLANK_PAGE).indentedAppend($_BROWSER);
     }
 
     private void maximizeBrowserWindow() {
-        newlineIndentedAppend(SeleniumBrowserKeywordEnum.MAXIMIZE_BROWSER_WINDOW.keyword());
+        newlineIndentedAppend(SeleniumKeywordEnum.MAXIMIZE_BROWSER_WINDOW.keyword());
     }
 
     private void setSeleniumSpeed() {
-        newlineIndentedAppend(SeleniumBrowserKeywordEnum.SET_SELENIUM_SPEED.keyword()).indentedAppend($_DELAY);
+        newlineIndentedAppend(SeleniumKeywordEnum.SET_SELENIUM_SPEED.keyword()).indentedAppend($_DELAY);
     }
 
     private void setSeleniumTimeout() {
-        newlineIndentedAppend(SeleniumBrowserKeywordEnum.SET_SELENIUM_TIMEOUT.keyword()).indentedAppend($_TIMEOUT);
+        newlineIndentedAppend(SeleniumKeywordEnum.SET_SELENIUM_TIMEOUT.keyword()).indentedAppend($_TIMEOUT);
     }
 
     private void setSeleniumImplicitWait() {
-        newlineIndentedAppend(SeleniumBrowserKeywordEnum.SET_SELENIUM_IMPLICIT_WAIT.keyword()).indentedAppend($_TIMEOUT);
+        newlineIndentedAppend(SeleniumKeywordEnum.SET_SELENIUM_IMPLICIT_WAIT.keyword()).indentedAppend($_TIMEOUT);
     }
 
     private void goTo() {
-        newlineIndentedAppend(SeleniumBrowserKeywordEnum.GO_TO.keyword()).indentedAppend($_URL);
+        newlineIndentedAppend(SeleniumKeywordEnum.GO_TO.keyword()).indentedAppend($_URL);
     }
 
     private void endWebTest() {
@@ -81,6 +81,6 @@ public class KeywordSectionComposer extends AbstractComposer {
     }
 
     private void closeBrowser() {
-        newlineIndentedAppend(SeleniumBrowserKeywordEnum.CLOSE_BROWSER.keyword());
+        newlineIndentedAppend(SeleniumKeywordEnum.CLOSE_BROWSER.keyword());
     }
 }

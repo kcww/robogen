@@ -1,24 +1,25 @@
 package net.kcww.app.robogen.translator.rule.waiting;
 
-import net.kcww.app.robogen.common.helper.TextMatcher;
-import net.kcww.app.robogen.translator.helper.Tokens;
-import net.kcww.app.robogen.translator.model.selenium.SeleniumWaitingKeywordEnum;
-import net.kcww.app.robogen.translator.rule.AbstractElementVerificationRule;
+import net.kcww.app.robogen.mapper.model.RelationModel;
+import net.kcww.app.robogen.translator.helper.Words;
+import net.kcww.app.robogen.translator.model.selenium.SeleniumKeywordEnum;
+import net.kcww.app.robogen.translator.rule.AbstractNonElementRule;
 import org.springframework.stereotype.Service;
-
-import static net.kcww.app.robogen.translator.helper.Tokens.isWaitingState;
 
 // Waits until the element locator appears on the current page.
 @Service
-public final class WaitUntilPageContainsElementRule extends AbstractElementVerificationRule {
+public final class WaitUntilPageContainsElementRule extends AbstractNonElementRule {
 
-    WaitUntilPageContainsElementRule() {
-        super(SeleniumWaitingKeywordEnum.WAIT_UNTIL_PAGE_CONTAINS_ELEMENT);
+    public WaitUntilPageContainsElementRule() {
+        super(SeleniumKeywordEnum.WAIT_UNTIL_PAGE_CONTAINS_ELEMENT);
     }
 
     @Override
-    protected boolean matchesTokenCondition(String text) {
-        if (!isWaitingState(text)) return false;
-        return TextMatcher.containsPattern(text, Tokens.PAGE_PATTERNS);
+    public boolean isApplicable(RelationModel relation) {
+        if (!super.isApplicable(relation)) return false;
+        var stepParameters = relation.scenarioStep().parameters();
+        if (stepParameters == null || stepParameters.isEmpty()) return false;
+        var stepText = relation.scenarioStep().text();
+        return Words.hasWait(stepText) && Words.hasPage(stepText);
     }
 }

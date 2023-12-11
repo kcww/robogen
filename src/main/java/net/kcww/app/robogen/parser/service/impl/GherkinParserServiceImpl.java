@@ -12,9 +12,8 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * Service implementation for parsing Gherkin files. This service processes
@@ -56,25 +55,25 @@ public class GherkinParserServiceImpl implements ParserService<InputStream, Gher
         var builder = GherkinModel.builder().document(doc);
 
         doc.getFeature().ifPresent(feature -> {
-            builder.featureName(feature.getName());
-            builder.featureDescription(feature.getDescription());
+            builder.featureName(feature.getName())
+                    .featureDescription(feature.getDescription());
 
             feature.getChildren().stream()
                     .map(FeatureChild::getScenario)
                     .flatMap(Optional::stream)
                     .findFirst()
                     .ifPresent(scenario -> {
-                        builder.scenarioName(scenario.getName());
-                        builder.scenarioSteps(processScenarioSteps(scenario));
+                        builder.scenarioName(scenario.getName())
+                                .scenarioSteps(processScenarioSteps(scenario));
                     });
         });
         return builder.build();
     }
 
-    private Set<ScenarioStepModel> processScenarioSteps(Scenario scenario) {
+    private List<ScenarioStepModel> processScenarioSteps(Scenario scenario) {
         var steps = scenario.getSteps().stream()
                 .map(this::buildScenarioStepModel)
-                .collect(Collectors.toUnmodifiableSet());
+                .toList();
         return changeStepConjunctionTypeToItsPredecessorType(steps);
     }
 
@@ -90,7 +89,7 @@ public class GherkinParserServiceImpl implements ParserService<InputStream, Gher
         return builder.build();
     }
 
-    private Set<ScenarioStepModel> changeStepConjunctionTypeToItsPredecessorType(Set<ScenarioStepModel> steps) {
+    private List<ScenarioStepModel> changeStepConjunctionTypeToItsPredecessorType(List<ScenarioStepModel> steps) {
         if (steps.isEmpty() || steps.size() == 1) return steps;
 
         StepKeywordType lastKeywordType = null;

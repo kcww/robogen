@@ -2,29 +2,28 @@ package net.kcww.app.robogen.translator.rule.waiting;
 
 import net.kcww.app.robogen.common.helper.TextMatcher;
 import net.kcww.app.robogen.mapper.model.RelationModel;
-import net.kcww.app.robogen.translator.helper.Tokens;
-import net.kcww.app.robogen.translator.model.selenium.SeleniumWaitingKeywordEnum;
-import net.kcww.app.robogen.translator.rule.AbstractVerificationRule;
+import net.kcww.app.robogen.translator.helper.Words;
+import net.kcww.app.robogen.translator.model.selenium.SeleniumKeywordEnum;
+import net.kcww.app.robogen.translator.rule.AbstractNonElementRule;
 import org.springframework.stereotype.Service;
-
-import static net.kcww.app.robogen.translator.helper.Tokens.isWaitingState;
 
 // Waits until the current URL is expected.
 @Service
-public final class WaitUntilLocationIsRule extends AbstractVerificationRule {
+public final class WaitUntilLocationIsRule extends AbstractNonElementRule {
 
-    WaitUntilLocationIsRule() {
-        super(SeleniumWaitingKeywordEnum.WAIT_UNTIL_LOCATION_IS);
+    public WaitUntilLocationIsRule() {
+        super(SeleniumKeywordEnum.WAIT_UNTIL_LOCATION_IS);
     }
-
-    protected boolean matchesTokenCondition(String text) {
-        if (!isWaitingState(text)) return false;
-        return TextMatcher.containsUrl(text);
+    @Override
+    public boolean isApplicable(RelationModel relation) {
+        if (!super.isApplicable(relation)) return false;
+        var stepText = relation.scenarioStep().text();
+        return Words.hasWait(stepText) && Words.hasUrl(stepText);
     }
 
     @Override
     protected String getValue(RelationModel relation) {
         return TextMatcher.extractUrls(relation.scenarioStep().text()).stream()
-                .findFirst().orElse(Tokens.ROBOT_EMPTY);
+                .findFirst().orElse(Words.ROBOT_EMPTY);
     }
 }
