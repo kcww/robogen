@@ -43,7 +43,7 @@ public class InputPasswordRuleTest extends AbstractElementRuleTest {
     }
 
     private static Stream<Arguments> elicitableRelationTestCases() {
-        return DataProvider.generateRelationStubsForAction(InputPasswordRule.KEYWORD);
+        return DataProvider.generateRelationStubsForAction(InputPasswordRule.SELENIUM_KEYWORD);
     }
 
     private static Stream<Arguments> relationWithInaptStepTypeTestCases() {
@@ -51,6 +51,6 @@ public class InputPasswordRuleTest extends AbstractElementRuleTest {
     }
 
     private static Stream<Arguments> relationWithIrrelevantWidgetTestCases() {
-        return DataProvider.generateRelationStubsWithIrrelevantWidgetForAction(InputPasswordRule.KEYWORD);
+        return DataProvider.generateRelationStubsWithIrrelevantWidgetForAction(InputPasswordRule.SELENIUM_KEYWORD);
     }
 }

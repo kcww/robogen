@@ -1,16 +1,19 @@
 package net.kcww.app.robogen.translator.rule;
 
-import io.cucumber.messages.types.StepKeywordType;
-import net.kcww.app.robogen.mapper.model.RelationModel;
+import lombok.extern.slf4j.Slf4j;
+import net.kcww.app.robogen.mapper.model.StepRelation;
+import net.kcww.app.robogen.translator.helper.Keywords;
+import net.kcww.app.robogen.translator.helper.WidgetEnum;
 import net.kcww.app.robogen.translator.helper.Widgets;
-import net.kcww.app.robogen.translator.model.KeywordModel;
-import net.kcww.app.robogen.translator.model.selenium.SeleniumKeyword;
-import net.kcww.app.robogen.translator.model.widget.Widget;
-import net.kcww.app.robogen.translator.model.widget.WidgetEnum;
+import net.kcww.app.robogen.translator.model.Keyword;
+import net.kcww.app.robogen.translator.model.SeleniumKeyword;
 
 import java.util.EnumSet;
+import java.util.Optional;
+import java.util.function.Function;
 
-public abstract class AbstractElementRule implements KeywordRule<RelationModel, KeywordModel> {
+@Slf4j
+public abstract class AbstractElementRule implements KeywordRule<StepRelation, Keyword> {
 
     private final SeleniumKeyword seleniumKeyword;
     private final EnumSet<WidgetEnum> relevantWidgets;
@@ -18,42 +21,35 @@ public abstract class AbstractElementRule implements KeywordRule<RelationModel, 
     protected AbstractElementRule(SeleniumKeyword seleniumKeyword) {
         this.seleniumKeyword = seleniumKeyword;
         this.relevantWidgets = Widgets.getRelevantWidgets(this.seleniumKeyword);
+        validateWidgets(this.relevantWidgets);
+    }
+
+    private void validateWidgets(EnumSet<WidgetEnum> relevantWidgets) {
+        if (relevantWidgets.isEmpty()) {
+            String errorMessage = String.format("No relevant widgets found for keyword: %s", seleniumKeyword.keyword());
+            log.error(errorMessage);
+            throw new IllegalStateException(errorMessage);
+        }
     }
 
     @Override
-    public boolean isApplicable(RelationModel relation) {
-        // assert !relevantWidgets.isEmpty() : "Relevant widgets must not be empty.";
-        if (relation.xmlElement() == null) return false;
-
-        if (!(isAction(relation) || isVerification(relation))) return false;
-
-        String widgetTag = relation.xmlElement().tagName();
-        return relevantWidgets.stream()
-                .map(Widget::tagName)
-                .anyMatch(tag -> tag.equalsIgnoreCase(widgetTag));
-    }
-
-    private boolean isAction(RelationModel relation) {
-        return seleniumKeyword.properties().type() == SeleniumKeyword.Type.ACTION &&
-                relation.scenarioStep().type() == StepKeywordType.ACTION;
-    }
-
-    private boolean isVerification(RelationModel relation) {
-        var keywordType = seleniumKeyword.properties().type();
-        var stepType = relation.scenarioStep().type();
-        return keywordType == SeleniumKeyword.Type.VERIFICATION &&
-                (stepType == StepKeywordType.CONTEXT || stepType == StepKeywordType.OUTCOME);
+    public boolean isApplicable(StepRelation relation) {
+        return relation != null && relation.xmlElement() != null &&
+                seleniumKeyword.isApplicable(relation.parsedStep().type()) &&
+                relevantWidgets.stream().anyMatch(widget -> widget.tagName().equalsIgnoreCase(relation.xmlElement().tagName()));
     }
 
     @Override
-    public KeywordModel translate(RelationModel relation) throws IllegalArgumentException {
-        var builder = KeywordModel.builder()
-                .keyword(seleniumKeyword.keyword())
-                .locator(relation.xmlElement().id());
+    public Keyword translate(StepRelation relation) {
+        return buildKeyword(relation, Keywords::determineArgument);
+    }
+
+    protected Keyword buildKeyword(StepRelation relation, Function<String, Optional<Keyword.Argument>> argFunc) {
+        var builder = Keyword.builder().keyword(seleniumKeyword.keyword())
+                .argument(Keywords.newArg(relation.xmlElement().id(), Keyword.Argument.Type.LOCATOR));
 
         if (seleniumKeyword.properties().hasArgument()) {
-            String value = relation.scenarioStep().literals().stream().findFirst().orElse("{" + relation.xmlElement().id() + "}");
-            builder.value(value);
+            argFunc.apply(relation.parsedStep().text()).ifPresent(builder::argument);
         }
         return builder.build();
     }

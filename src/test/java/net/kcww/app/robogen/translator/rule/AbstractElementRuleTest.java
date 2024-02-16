@@ -1,10 +1,10 @@
 package net.kcww.app.robogen.translator.rule;
 
-import net.kcww.app.robogen.mapper.model.RelationModel;
-import net.kcww.app.robogen.parser.model.ScenarioStepModel;
-import net.kcww.app.robogen.parser.model.XmlElementModel;
+import net.kcww.app.robogen.mapper.model.StepRelation;
+import net.kcww.app.robogen.parser.model.ParsedStep;
+import net.kcww.app.robogen.parser.model.XmlElement;
 import net.kcww.app.robogen.translator.helper.RelationModelStub;
-import net.kcww.app.robogen.translator.model.KeywordModel;
+import net.kcww.app.robogen.translator.model.Keyword;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -16,13 +16,13 @@ import static org.mockito.Mockito.*;
 public abstract class AbstractElementRuleTest {
 
     @Mock
-    private RelationModel mockRelation;
+    private StepRelation mockRelation;
     @Mock
-    private ScenarioStepModel mockScenarioStep;
+    private ParsedStep mockParsedStep;
     @Mock
-    private XmlElementModel mockXmlElement;
+    private XmlElement mockXmlElement;
 
-    protected void runTest(KeywordRule<RelationModel, KeywordModel> rule, RelationModelStub relationStub, boolean expectedResult) {
+    protected void runTest(KeywordRule<StepRelation, Keyword> rule, RelationModelStub relationStub, boolean expectedResult) {
         setupMocks(relationStub);
 
         boolean actualResult = rule.isApplicable(mockRelation);
@@ -34,8 +34,8 @@ public abstract class AbstractElementRuleTest {
     private void setupMocks(RelationModelStub relationStub) {
         if (relationStub == null) return;
         when(mockRelation.xmlElement()).thenReturn(mockXmlElement);
-        when(mockRelation.scenarioStep()).thenReturn(mockScenarioStep);
-        when(mockScenarioStep.type()).thenReturn(relationStub.stepType());
+        when(mockRelation.parsedStep()).thenReturn(mockParsedStep);
+        when(mockParsedStep.type()).thenReturn(relationStub.stepType());
         setupOptionalMocks(relationStub);
     }
 
@@ -44,7 +44,7 @@ public abstract class AbstractElementRuleTest {
             when(mockXmlElement.tagName()).thenReturn(relationStub.tagName());
         }
         if (relationStub.stepText() != null) {
-            when(mockScenarioStep.text()).thenReturn(relationStub.stepText());
+            when(mockParsedStep.text()).thenReturn(relationStub.stepText());
         }
     }
 
@@ -55,13 +55,13 @@ public abstract class AbstractElementRuleTest {
 
     private void verifyOptionalInteractions(RelationModelStub relationStub) {
         if (relationStub != null) {
-            verify(mockScenarioStep, atLeastOnce()).type();
+            verify(mockParsedStep, atLeastOnce()).type();
             verify(mockXmlElement, relationStub.tagName() != null ? atLeastOnce() : never()).tagName();
-            verify(mockScenarioStep, relationStub.stepText() != null ? atLeastOnce() : never()).text();
+            verify(mockParsedStep, relationStub.stepText() != null ? atLeastOnce() : never()).text();
         } else {
-            verify(mockScenarioStep, never()).type();
+            verify(mockParsedStep, never()).type();
             verify(mockXmlElement, never()).tagName();
-            verify(mockScenarioStep, never()).text();
+            verify(mockParsedStep, never()).text();
         }
     }
 }

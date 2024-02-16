@@ -1,4 +1,4 @@
-package net.kcww.app.robogen.parser.model;
+package net.kcww.app.robogen.parser.helper;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

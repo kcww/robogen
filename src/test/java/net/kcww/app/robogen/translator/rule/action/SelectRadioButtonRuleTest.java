@@ -67,7 +67,7 @@ public class SelectRadioButtonRuleTest extends AbstractElementRuleTest {
 
     private static Stream<Arguments> elicitableRelationTestCases() {
         return DataProvider.generateRelationStubsForAction(
-                SelectRadioButtonRule.KEYWORD, aptStepTexts);
+                SelectRadioButtonRule.SELENIUM_KEYWORD, aptStepTexts);
     }
 
     private static Stream<Arguments> relationWithInaptStepTypeTestCases() {
@@ -76,11 +76,11 @@ public class SelectRadioButtonRuleTest extends AbstractElementRuleTest {
 
     private static Stream<Arguments> relationWithIrrelevantWidgetTestCases() {
         return DataProvider.generateRelationStubsWithIrrelevantWidgetForAction(
-                SelectRadioButtonRule.KEYWORD);
+                SelectRadioButtonRule.SELENIUM_KEYWORD);
     }
 
     private static Stream<Arguments> relationWithInaptStepTextTestCases() {
         return DataProvider.generateRelationStubsForAction(
-                SelectRadioButtonRule.KEYWORD, inaptStepTexts);
+                SelectRadioButtonRule.SELENIUM_KEYWORD, inaptStepTexts);
     }
 }

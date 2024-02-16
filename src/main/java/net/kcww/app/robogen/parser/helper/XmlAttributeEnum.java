@@ -1,4 +1,4 @@
-package net.kcww.app.robogen.parser.model;
+package net.kcww.app.robogen.parser.helper;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -10,7 +10,6 @@ import lombok.experimental.Accessors;
 public enum XmlAttributeEnum {
 
     ID("id"),
-    DEBUG_ID("debugId"),
     NAME("name"),
     LABEL("label"),
     VALUE("value"),
@@ -19,5 +18,4 @@ public enum XmlAttributeEnum {
     REQUIRED("required");
 
     private final String attrName;
-
 }

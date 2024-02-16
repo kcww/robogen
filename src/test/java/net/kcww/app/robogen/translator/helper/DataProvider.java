@@ -3,10 +3,9 @@ package net.kcww.app.robogen.translator.helper;
 import io.cucumber.messages.types.StepKeywordType;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-import net.kcww.app.robogen.common.helper.TextMatcher;
-import net.kcww.app.robogen.translator.model.selenium.SeleniumKeyword;
-import net.kcww.app.robogen.translator.model.widget.Widget;
-import net.kcww.app.robogen.translator.model.widget.WidgetEnum;
+import net.kcww.app.robogen.common.helper.Texts;
+import net.kcww.app.robogen.translator.model.SeleniumKeyword;
+import net.kcww.app.robogen.translator.model.Widget;
 import org.junit.jupiter.params.provider.Arguments;
 
 import java.util.*;
@@ -24,12 +23,12 @@ public final class DataProvider {
     private static final EnumSet<StepKeywordType> ACTION_STEP_TYPE = EnumSet.of(ACTION);
     private static final EnumSet<StepKeywordType> VERIFICATION_STEP_TYPES = EnumSet.of(CONTEXT, OUTCOME);
 
-    public static Stream<Arguments> generateRelationStubsForAction(SeleniumKeyword keyword) {
-        return generateRelationStubs(ACTION_STEP_TYPE, null, Widgets.getRelevantWidgets(keyword), false);
+    public static Stream<Arguments> generateRelationStubsForAction(SeleniumKeyword seleniumKeyword) {
+        return generateRelationStubs(ACTION_STEP_TYPE, null, Widgets.getRelevantWidgets(seleniumKeyword), false);
     }
 
-    public static Stream<Arguments> generateRelationStubsForAction(SeleniumKeyword keyword, Set<String> stepTexts) {
-        return generateRelationStubs(ACTION_STEP_TYPE, stepTexts, Widgets.getRelevantWidgets(keyword), false);
+    public static Stream<Arguments> generateRelationStubsForAction(SeleniumKeyword seleniumKeyword, Set<String> stepTexts) {
+        return generateRelationStubs(ACTION_STEP_TYPE, stepTexts, Widgets.getRelevantWidgets(seleniumKeyword), false);
     }
 
     public static Stream<Arguments> generateRelationStubsForVerification(Set<String> stepTexts) {
@@ -40,12 +39,12 @@ public final class DataProvider {
         return generateRelationStubs(VERIFICATION_STEP_TYPES, stepTexts, null, true);
     }
 
-    public static Stream<Arguments> generateRelationStubsForVerification(SeleniumKeyword keyword) {
-        return generateRelationStubs(VERIFICATION_STEP_TYPES, null, Widgets.getRelevantWidgets(keyword), false);
+    public static Stream<Arguments> generateRelationStubsForVerification(SeleniumKeyword seleniumKeyword) {
+        return generateRelationStubs(VERIFICATION_STEP_TYPES, null, Widgets.getRelevantWidgets(seleniumKeyword), false);
     }
 
-    public static Stream<Arguments> generateRelationStubsForVerification(SeleniumKeyword keyword, Set<String> stepTexts) {
-        return generateRelationStubs(VERIFICATION_STEP_TYPES, stepTexts, Widgets.getRelevantWidgets(keyword), false);
+    public static Stream<Arguments> generateRelationStubsForVerification(SeleniumKeyword seleniumKeyword, Set<String> stepTexts) {
+        return generateRelationStubs(VERIFICATION_STEP_TYPES, stepTexts, Widgets.getRelevantWidgets(seleniumKeyword), false);
     }
 
     // Any Widgets with inapt Step Type Cases:
@@ -61,12 +60,12 @@ public final class DataProvider {
     }
 
     // Irrelevant Widget Cases:
-    public static Stream<Arguments> generateRelationStubsWithIrrelevantWidgetForAction(SeleniumKeyword keyword) {
-        return generateRelationStubs(ACTION_STEP_TYPE, null, getIrrelevantWidgets(keyword), false);
+    public static Stream<Arguments> generateRelationStubsWithIrrelevantWidgetForAction(SeleniumKeyword seleniumKeyword) {
+        return generateRelationStubs(ACTION_STEP_TYPE, null, getIrrelevantWidgets(seleniumKeyword), false);
     }
 
-    public static Stream<Arguments> generateRelationStubsWithIrrelevantWidgetForVerification(SeleniumKeyword keyword) {
-        return generateRelationStubs(VERIFICATION_STEP_TYPES, null, getIrrelevantWidgets(keyword), false);
+    public static Stream<Arguments> generateRelationStubsWithIrrelevantWidgetForVerification(SeleniumKeyword seleniumKeyword) {
+        return generateRelationStubs(VERIFICATION_STEP_TYPES, null, getIrrelevantWidgets(seleniumKeyword), false);
     }
 
     public static Stream<Arguments> generateRelationStubsWithRandomWidgetForVerification(int count) {
@@ -97,13 +96,13 @@ public final class DataProvider {
     }
 
     private static Arguments buildRelationStub(StepKeywordType stepType, String stepText, Widget widget, boolean extractStepParameters) {
-        var stepParameters = extractStepParameters && stepText != null ? TextMatcher.extractScenarioStepParameters(stepText) : null;
+        var stepParameters = extractStepParameters && stepText != null ? Texts.(stepText) : null;
         var tagName = widget != null ? widget.tagName() : null;
         return Arguments.of(new RelationModelStub(stepType, stepText, stepParameters, tagName));
     }
 
-    private static EnumSet<WidgetEnum> getIrrelevantWidgets(SeleniumKeyword keyword) {
-        var relevantWidgets = Widgets.getRelevantWidgets(keyword);
+    private static EnumSet<WidgetEnum> getIrrelevantWidgets(SeleniumKeyword seleniumKeyword) {
+        var relevantWidgets = Widgets.getRelevantWidgets(seleniumKeyword);
         var allWidgets = EnumSet.allOf(WidgetEnum.class);
         allWidgets.removeAll(relevantWidgets);
         return allWidgets;

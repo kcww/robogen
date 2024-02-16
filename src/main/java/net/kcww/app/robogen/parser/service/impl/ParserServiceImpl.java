@@ -4,10 +4,10 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.kcww.app.robogen.input.entity.UserInput;
 import net.kcww.app.robogen.parser.exception.ParsingException;
-import net.kcww.app.robogen.parser.model.GherkinModel;
-import net.kcww.app.robogen.parser.model.ParsedDataModel;
-import net.kcww.app.robogen.parser.model.XmlElementModel;
-import net.kcww.app.robogen.parser.model.XsdElementModel;
+import net.kcww.app.robogen.parser.model.ParsedFeature;
+import net.kcww.app.robogen.parser.model.ParsedUserInput;
+import net.kcww.app.robogen.parser.model.XmlElement;
+import net.kcww.app.robogen.parser.model.XsdElement;
 import net.kcww.app.robogen.parser.service.ParserService;
 import org.springframework.stereotype.Service;
 
@@ -22,53 +22,42 @@ import java.util.List;
 @Service
 @AllArgsConstructor
 @Slf4j
-public class ParserServiceImpl implements ParserService<UserInput, ParsedDataModel> {
+public class ParserServiceImpl implements ParserService<UserInput, ParsedUserInput> {
 
-    private final ParserService<InputStream, GherkinModel> gherkinParserService;
-    private final ParserService<InputStream, List<XmlElementModel>> xmlParserService;
-    private final ParserService<InputStream, List<XsdElementModel>> xsdParserService;
+    private static final String PARSING_ERROR_MSG = "Error occurred while parsing input files: ";
+    private final ParserService<InputStream, ParsedFeature> featureParserService;
+    private final ParserService<InputStream, List<XmlElement>> xmlParserService;
+    private final ParserService<InputStream, List<XsdElement>> xsdParserService;
 
-    /**
-     * Parses the contents of UserInput and constructs a ParsedDataModel.
-     * This method orchestrates the parsing of different types of files provided in the UserInput.
-     *
-     * @param input the UserInput containing the files to be parsed. It includes Gherkin, XML, and XSD files.
-     * @return ParsedDataModel containing the parsed data from the input files.
-     * @throws ParsingException if an error occurs during the parsing process. This can be due to file format issues,
-     *                          IO problems, or other parsing-related errors. The exception encapsulates
-     *                          the detailed cause of the failure.
-     */
     @Override
-    public ParsedDataModel parse(UserInput input) throws ParsingException {
+    public ParsedUserInput parse(UserInput input) throws ParsingException {
         try {
-            return parseInputFiles(input);
-        } catch (IOException e) {
-            log.error("IO Error occurred while parsing the input files.", e);
-            throw new ParsingException("IO Error during parsing", e);
-        } catch (ParsingException e) {
-            log.error("Error occurred while parsing the input files.", e);
-            throw e;
+            var feature = parseFeature(input.getFeatureFile());
+            var xmlElements = parseXml(input.getXmlFile());
+            var xsdElements = parseXsd(input.getXsdFile());
+            return new ParsedUserInput(feature, xmlElements, xsdElements);
+        } catch (Exception e) {
+            String detailedError = PARSING_ERROR_MSG + e.getMessage();
+            log.error(detailedError, e);
+            throw new ParsingException(detailedError, e);
         }
     }
 
-    /**
-     * Parses the input files from UserInput into their respective models.
-     *
-     * @param input the UserInput containing the files.
-     * @return ParsedDataModel containing the parsed data.
-     * @throws ParsingException if an error occurs during parsing.
-     * @throws IOException      if an IO error occurs during file processing.
-     */
-    private ParsedDataModel parseInputFiles(UserInput input) throws ParsingException, IOException {
-        try (var featureStream = new ByteArrayInputStream(input.getFeatureFile());
-             var xmlStream = new ByteArrayInputStream(input.getXmlFile());
-             var xsdStream = new ByteArrayInputStream(input.getXsdFile())) {
+    private ParsedFeature parseFeature(byte[] featureFile) throws IOException, ParsingException {
+        try (InputStream featureInputStream = new ByteArrayInputStream(featureFile)) {
+            return featureParserService.parse(featureInputStream);
+        }
+    }
 
-            var gherkinDocument = gherkinParserService.parse(featureStream);
-            var xmlElements = xmlParserService.parse(xmlStream);
-            var xsdElements = xsdParserService.parse(xsdStream);
+    private List<XmlElement> parseXml(byte[] xmlFile) throws IOException, ParsingException {
+        try (InputStream xmlInputStream = new ByteArrayInputStream(xmlFile)) {
+            return xmlParserService.parse(xmlInputStream);
+        }
+    }
 
-            return new ParsedDataModel(gherkinDocument, xmlElements, xsdElements);
+    private List<XsdElement> parseXsd(byte[] xsdFile) throws IOException, ParsingException {
+        try (InputStream xsdInputStream = new ByteArrayInputStream(xsdFile)) {
+            return xsdParserService.parse(xsdInputStream);
         }
     }
 }

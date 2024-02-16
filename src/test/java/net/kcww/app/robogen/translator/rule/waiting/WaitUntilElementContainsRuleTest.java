@@ -63,7 +63,7 @@ public class WaitUntilElementContainsRuleTest  extends AbstractElementRuleTest {
 
     private static Stream<Arguments> elicitableRelationTestCases() {
         return DataProvider.generateRelationStubsForVerification(
-                WaitUntilElementContainsRule.KEYWORD, aptStepTexts);
+                WaitUntilElementContainsRule.SELENIUM_KEYWORD, aptStepTexts);
     }
 
     private static Stream<Arguments> relationWithInaptStepTypeTestCases() {
@@ -72,11 +72,11 @@ public class WaitUntilElementContainsRuleTest  extends AbstractElementRuleTest {
 
     private static Stream<Arguments> relationWithIrrelevantWidgetTestCases() {
         return DataProvider.generateRelationStubsWithIrrelevantWidgetForVerification(
-                WaitUntilElementContainsRule.KEYWORD);
+                WaitUntilElementContainsRule.SELENIUM_KEYWORD);
     }
 
     private static Stream<Arguments> relationWithInaptStepTextTestCases() {
         return DataProvider.generateRelationStubsForVerification(
-                WaitUntilElementContainsRule.KEYWORD, inaptStepTexts);
+                WaitUntilElementContainsRule.SELENIUM_KEYWORD, inaptStepTexts);
     }
 }

@@ -1,9 +1,7 @@
 package net.kcww.app.robogen.parser.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import jakarta.validation.constraints.NotEmpty;
+import lombok.*;
 import lombok.experimental.Accessors;
 
 // UI Model
@@ -12,7 +10,7 @@ import lombok.experimental.Accessors;
 @Accessors(fluent = true)
 @AllArgsConstructor
 @NoArgsConstructor
-public class XmlElementModel {
+public class XmlElement {
 
     // XML Element name
     // e.g., <a:TextField label="First name" debugId="firstName" required="true" clearButtonVisible="true" autoFocus="true"/>
@@ -21,6 +19,7 @@ public class XmlElementModel {
     private String tagName;     // TextField        IntegerField
 
     // XML Attributes
+    @NonNull @NotEmpty
     private String id;          // firstName        adults
     private String name;        // null             null
     private String label;       // First name       Number of Adults

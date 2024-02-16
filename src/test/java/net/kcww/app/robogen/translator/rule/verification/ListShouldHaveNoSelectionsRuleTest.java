@@ -62,7 +62,7 @@ public class ListShouldHaveNoSelectionsRuleTest extends AbstractElementRuleTest 
 
     private static Stream<Arguments> elicitableRelationTestCases() {
         return DataProvider.generateRelationStubsForVerification(
-                ListShouldHaveNoSelectionsRule.KEYWORD, aptStepTexts);
+                ListShouldHaveNoSelectionsRule.SELENIUM_KEYWORD, aptStepTexts);
     }
 
     private static Stream<Arguments> relationWithInaptStepTypeTestCases() {
@@ -71,11 +71,11 @@ public class ListShouldHaveNoSelectionsRuleTest extends AbstractElementRuleTest 
 
     private static Stream<Arguments> relationWithIrrelevantWidgetTestCases() {
         return DataProvider.generateRelationStubsWithIrrelevantWidgetForVerification(
-                ListShouldHaveNoSelectionsRule.KEYWORD);
+                ListShouldHaveNoSelectionsRule.SELENIUM_KEYWORD);
     }
 
     private static Stream<Arguments> relationWithInaptStepTextTestCases() {
         return DataProvider.generateRelationStubsForVerification(
-                ListShouldHaveNoSelectionsRule.KEYWORD, inaptStepTexts);
+                ListShouldHaveNoSelectionsRule.SELENIUM_KEYWORD, inaptStepTexts);
     }
 }

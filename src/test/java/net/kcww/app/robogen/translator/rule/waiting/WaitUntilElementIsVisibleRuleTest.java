@@ -65,7 +65,7 @@ public class WaitUntilElementIsVisibleRuleTest extends AbstractElementRuleTest {
 
     private static Stream<Arguments> elicitableRelationTestCases() {
         return DataProvider.generateRelationStubsForVerification(
-                WaitUntilElementIsVisibleRule.KEYWORD, aptStepTexts);
+                WaitUntilElementIsVisibleRule.SELENIUM_KEYWORD, aptStepTexts);
     }
 
     private static Stream<Arguments> relationWithInaptStepTypeTestCases() {
@@ -74,11 +74,11 @@ public class WaitUntilElementIsVisibleRuleTest extends AbstractElementRuleTest {
 
     private static Stream<Arguments> relationWithIrrelevantWidgetTestCases() {
         return DataProvider.generateRelationStubsWithIrrelevantWidgetForVerification(
-                WaitUntilElementIsVisibleRule.KEYWORD);
+                WaitUntilElementIsVisibleRule.SELENIUM_KEYWORD);
     }
 
     private static Stream<Arguments> relationWithInaptStepTextTestCases() {
         return DataProvider.generateRelationStubsForVerification(
-                WaitUntilElementIsVisibleRule.KEYWORD, inaptStepTexts);
+                WaitUntilElementIsVisibleRule.SELENIUM_KEYWORD, inaptStepTexts);
     }
 }

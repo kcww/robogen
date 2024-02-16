@@ -65,7 +65,7 @@ public class UnselectAllFromListRuleTest extends AbstractElementRuleTest {
 
     private static Stream<Arguments> elicitableRelationTestCases() {
         return DataProvider.generateRelationStubsForAction(
-                UnselectAllFromListRule.KEYWORD, aptStepTexts);
+                UnselectAllFromListRule.SELENIUM_KEYWORD, aptStepTexts);
     }
 
     private static Stream<Arguments> relationWithInaptStepTypeTestCases() {
@@ -74,11 +74,11 @@ public class UnselectAllFromListRuleTest extends AbstractElementRuleTest {
 
     private static Stream<Arguments> relationWithIrrelevantWidgetTestCases() {
         return DataProvider.generateRelationStubsWithIrrelevantWidgetForAction(
-                UnselectAllFromListRule.KEYWORD);
+                UnselectAllFromListRule.SELENIUM_KEYWORD);
     }
 
     private static Stream<Arguments> relationWithInaptStepTextTestCases() {
         return DataProvider.generateRelationStubsForAction(
-                UnselectAllFromListRule.KEYWORD, inaptStepTexts);
+                UnselectAllFromListRule.SELENIUM_KEYWORD, inaptStepTexts);
     }
 }

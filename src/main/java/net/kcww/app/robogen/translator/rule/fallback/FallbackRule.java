@@ -1,14 +1,14 @@
 package net.kcww.app.robogen.translator.rule.fallback;
 
 import lombok.extern.slf4j.Slf4j;
-import net.kcww.app.robogen.mapper.model.RelationModel;
-import net.kcww.app.robogen.translator.model.KeywordModel;
+import net.kcww.app.robogen.mapper.model.StepRelation;
+import net.kcww.app.robogen.translator.model.Keyword;
 import net.kcww.app.robogen.translator.rule.KeywordRule;
 
 //@Service
 //@Priority(Integer.MAX_VALUE)
 @Slf4j
-public final class FallbackRule implements KeywordRule<RelationModel, KeywordModel> {
+public final class FallbackRule implements KeywordRule<StepRelation, Keyword> {
 
     /**
      * Always returns true as this is a fallback rule.
@@ -17,7 +17,7 @@ public final class FallbackRule implements KeywordRule<RelationModel, KeywordMod
      * @return true in all cases.
      */
     @Override
-    public boolean isApplicable(RelationModel model) {
+    public boolean isApplicable(StepRelation model) {
         return true;
     }
 
@@ -29,10 +29,10 @@ public final class FallbackRule implements KeywordRule<RelationModel, KeywordMod
      * @return KeywordModel containing an error message.
      */
     @Override
-    public KeywordModel translate(RelationModel model) {
-        var stepText = model.scenarioStep().text();
+    public Keyword translate(StepRelation model) {
+        var stepText = model.parsedStep().text();
         var errorMessage = String.format("No Keyword found for Step: %s", stepText);
         log.info(errorMessage);
-        return KeywordModel.builder().keyword(errorMessage).build();
+        return Keyword.builder().keyword(errorMessage).build();
     }
 }

@@ -62,7 +62,7 @@ public class ListSelectionShouldBeRuleTest extends AbstractElementRuleTest {
 
     private static Stream<Arguments> elicitableRelationTestCases() {
         return DataProvider.generateRelationStubsForVerification(
-                ListSelectionShouldBeRule.KEYWORD, aptStepTexts);
+                ListSelectionShouldBeRule.SELENIUM_KEYWORD, aptStepTexts);
     }
 
     private static Stream<Arguments> relationWithInaptStepTypeTestCases() {
@@ -71,11 +71,11 @@ public class ListSelectionShouldBeRuleTest extends AbstractElementRuleTest {
 
     private static Stream<Arguments> relationWithIrrelevantWidgetTestCases() {
         return DataProvider.generateRelationStubsWithIrrelevantWidgetForVerification(
-                ListSelectionShouldBeRule.KEYWORD);
+                ListSelectionShouldBeRule.SELENIUM_KEYWORD);
     }
 
     private static Stream<Arguments> relationWithInaptStepTextTestCases() {
         return DataProvider.generateRelationStubsForVerification(
-                ListSelectionShouldBeRule.KEYWORD, inaptStepTexts);
+                ListSelectionShouldBeRule.SELENIUM_KEYWORD, inaptStepTexts);
     }
 }

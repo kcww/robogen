@@ -44,7 +44,7 @@ public class TextfieldShouldContainRuleTest extends AbstractElementRuleTest {
 
     private static Stream<Arguments> elicitableRelationTestCases() {
         return DataProvider.generateRelationStubsForVerification(
-                TextfieldShouldContainRule.KEYWORD);
+                TextfieldShouldContainRule.SELENIUM_KEYWORD);
     }
 
     private static Stream<Arguments> relationWithInaptStepTypeTestCases() {
@@ -53,6 +53,6 @@ public class TextfieldShouldContainRuleTest extends AbstractElementRuleTest {
 
     private static Stream<Arguments> relationWithIrrelevantWidgetTestCases() {
         return DataProvider.generateRelationStubsWithIrrelevantWidgetForVerification(
-                TextfieldShouldContainRule.KEYWORD);
+                TextfieldShouldContainRule.SELENIUM_KEYWORD);
     }
 }

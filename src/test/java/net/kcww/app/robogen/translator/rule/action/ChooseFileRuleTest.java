@@ -43,7 +43,7 @@ public class ChooseFileRuleTest extends AbstractElementRuleTest {
     }
 
     private static Stream<Arguments> elicitableRelationTestCases() {
-        return DataProvider.generateRelationStubsForAction(ChooseFileRule.KEYWORD);
+        return DataProvider.generateRelationStubsForAction(ChooseFileRule.SELENIUM_KEYWORD);
     }
 
     private static Stream<Arguments> relationWithInaptStepTypeTestCases() {
@@ -51,6 +51,6 @@ public class ChooseFileRuleTest extends AbstractElementRuleTest {
     }
 
     private static Stream<Arguments> relationWithIrrelevantWidgetTestCases() {
-        return DataProvider.generateRelationStubsWithIrrelevantWidgetForAction(ChooseFileRule.KEYWORD);
+        return DataProvider.generateRelationStubsWithIrrelevantWidgetForAction(ChooseFileRule.SELENIUM_KEYWORD);
     }
 }

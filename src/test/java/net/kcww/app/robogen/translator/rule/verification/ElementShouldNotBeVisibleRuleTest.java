@@ -65,7 +65,7 @@ public class ElementShouldNotBeVisibleRuleTest extends AbstractElementRuleTest {
 
     private static Stream<Arguments> elicitableRelationTestCases() {
         return DataProvider.generateRelationStubsForVerification(
-                ElementShouldNotBeVisibleRule.KEYWORD, aptStepTexts);
+                ElementShouldNotBeVisibleRule.SELENIUM_KEYWORD, aptStepTexts);
     }
 
     private static Stream<Arguments> relationWithInaptStepTypeTestCases() {
@@ -74,11 +74,11 @@ public class ElementShouldNotBeVisibleRuleTest extends AbstractElementRuleTest {
 
     private static Stream<Arguments> relationWithIrrelevantWidgetTestCases() {
         return DataProvider.generateRelationStubsWithIrrelevantWidgetForVerification(
-                ElementShouldNotBeVisibleRule.KEYWORD);
+                ElementShouldNotBeVisibleRule.SELENIUM_KEYWORD);
     }
 
     private static Stream<Arguments> relationWithInaptStepTextTestCases() {
         return DataProvider.generateRelationStubsForVerification(
-                ElementShouldNotBeVisibleRule.KEYWORD, inaptStepTexts);
+                ElementShouldNotBeVisibleRule.SELENIUM_KEYWORD, inaptStepTexts);
     }
 }

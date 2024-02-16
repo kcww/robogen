@@ -62,7 +62,7 @@ public class RadioButtonShouldBeSetToRuleTest extends AbstractElementRuleTest {
 
     private static Stream<Arguments> elicitableRelationTestCases() {
         return DataProvider.generateRelationStubsForVerification(
-                RadioButtonShouldBeSetToRule.KEYWORD, aptStepTexts);
+                RadioButtonShouldBeSetToRule.SELENIUM_KEYWORD, aptStepTexts);
     }
 
     private static Stream<Arguments> relationWithInaptStepTypeTestCases() {
@@ -71,11 +71,11 @@ public class RadioButtonShouldBeSetToRuleTest extends AbstractElementRuleTest {
 
     private static Stream<Arguments> relationWithIrrelevantWidgetTestCases() {
         return DataProvider.generateRelationStubsWithIrrelevantWidgetForVerification(
-                RadioButtonShouldBeSetToRule.KEYWORD);
+                RadioButtonShouldBeSetToRule.SELENIUM_KEYWORD);
     }
 
     private static Stream<Arguments> relationWithInaptStepTextTestCases() {
         return DataProvider.generateRelationStubsForVerification(
-                RadioButtonShouldBeSetToRule.KEYWORD, inaptStepTexts);
+                RadioButtonShouldBeSetToRule.SELENIUM_KEYWORD, inaptStepTexts);
     }
 }

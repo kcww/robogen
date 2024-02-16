@@ -62,7 +62,7 @@ public class RadioButtonShouldNotBeSelectedRuleTest extends AbstractElementRuleT
 
     private static Stream<Arguments> elicitableRelationTestCases() {
         return DataProvider.generateRelationStubsForVerification(
-                RadioButtonShouldNotBeSelectedRule.KEYWORD, aptStepTexts);
+                RadioButtonShouldNotBeSelectedRule.SELENIUM_KEYWORD, aptStepTexts);
     }
 
     private static Stream<Arguments> relationWithInaptStepTypeTestCases() {
@@ -71,11 +71,11 @@ public class RadioButtonShouldNotBeSelectedRuleTest extends AbstractElementRuleT
 
     private static Stream<Arguments> relationWithIrrelevantWidgetTestCases() {
         return DataProvider.generateRelationStubsWithIrrelevantWidgetForVerification(
-                RadioButtonShouldNotBeSelectedRule.KEYWORD);
+                RadioButtonShouldNotBeSelectedRule.SELENIUM_KEYWORD);
     }
 
     private static Stream<Arguments> relationWithInaptStepTextTestCases() {
         return DataProvider.generateRelationStubsForVerification(
-                RadioButtonShouldNotBeSelectedRule.KEYWORD, inaptStepTexts);
+                RadioButtonShouldNotBeSelectedRule.SELENIUM_KEYWORD, inaptStepTexts);
     }
 }

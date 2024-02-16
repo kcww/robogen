@@ -2,16 +2,16 @@ package net.kcww.app.robogen.processor.impl;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import net.kcww.app.robogen.composer.model.ComposingMaterialModel;
-import net.kcww.app.robogen.composer.service.ComposerService;
+import net.kcww.app.robogen.composer.service.ScriptWriterService;
 import net.kcww.app.robogen.input.entity.UserInput;
-import net.kcww.app.robogen.mapper.model.RelationModel;
+import net.kcww.app.robogen.mapper.model.StepRelation;
 import net.kcww.app.robogen.mapper.service.MapperService;
 import net.kcww.app.robogen.parser.exception.ParsingException;
-import net.kcww.app.robogen.parser.model.ParsedDataModel;
+import net.kcww.app.robogen.parser.model.ParsedFeature;
+import net.kcww.app.robogen.parser.model.ParsedUserInput;
 import net.kcww.app.robogen.parser.service.ParserService;
 import net.kcww.app.robogen.processor.TaskProcessor;
-import net.kcww.app.robogen.translator.model.KeywordModel;
+import net.kcww.app.robogen.translator.model.Keyword;
 import net.kcww.app.robogen.translator.service.TranslatorService;
 import org.springframework.stereotype.Service;
 
@@ -22,46 +22,39 @@ import java.util.List;
 @Slf4j
 public class TaskProcessorImpl implements TaskProcessor<UserInput> {
 
-    private final ParserService<UserInput, ParsedDataModel> parserService;
-    private final MapperService<ParsedDataModel, List<RelationModel>> mapperService;
-    private final TranslatorService<RelationModel, KeywordModel> translatorService;
-    private final ComposerService<ComposingMaterialModel, String> robotComposerService;
+    private final ParserService<UserInput, ParsedUserInput> parserService;
+    private final MapperService<ParsedUserInput, List<StepRelation>> mapperService;
+    private final TranslatorService<StepRelation, Keyword> translatorService;
+    private final ScriptWriterService<ParsedFeature, List<Keyword>, String> scriptWriterService;
 
     @Override
-    public void process(UserInput userInput) {
-        var parsedData = parse(userInput);
-        var relations = map(parsedData);
-//        log.info(relations.toString());
-        var keywords = translate(relations);
-        var script = compose(keywords);
-        log.info("Generated Robot Framework script:\n{}", script);
-    }
-
-    private ParsedDataModel parse(UserInput userInput) {
+    public void process(UserInput input) {
         try {
-            return parserService.parse(userInput);
-        } catch (ParsingException e) {
-            log.error("Error occurred while parsing the input files.", e);
+            ParsedUserInput parsedInput = parseInput(input);
+//            log.info("Parsed input:\n{}", parsedInput);
+            List<StepRelation> relations = mapToRelations(parsedInput);
+//            log.info("Mapped relations:\n{}", relations);
+            List<Keyword> keywords = translateToKeywords(relations);
+            String script = composeScript(parsedInput.parsedFeature(), keywords);
+            log.info("Generated Robot Framework script:\n{}", script);
+        } catch (Exception e) {
+            log.error("Error occurred during task processing", e);
         }
-        return null;
     }
 
-    private List<RelationModel> map(ParsedDataModel parsedData) {
-        return mapperService.map(parsedData);
+    private ParsedUserInput parseInput(UserInput input) throws ParsingException {
+        return parserService.parse(input);
     }
 
-    private List<KeywordModel> translate(List<RelationModel> models) {
-        return translatorService.translate(models);
+    private List<StepRelation> mapToRelations(ParsedUserInput parsedInput) {
+        return mapperService.map(parsedInput);
     }
 
-    private String compose(List<KeywordModel> models) {
-        var material = ComposingMaterialModel.builder()
-                .url("http://www.example.com")
-                .featureName("<feature-name>")
-                .featureDescription("<feature-description>")
-                .scenarioName("<scenario-name>")
-                .keywordModels(models)
-                .build();
-        return robotComposerService.compose(material);
+    private List<Keyword> translateToKeywords(List<StepRelation> relations) {
+        return translatorService.translate(relations);
+    }
+
+    private String composeScript(ParsedFeature feature, List<Keyword> keywords) {
+        return scriptWriterService.compose(feature, keywords);
     }
 }

@@ -67,7 +67,7 @@ public class CheckboxShouldBeSelectedRuleTest extends AbstractElementRuleTest {
 
     private static Stream<Arguments> elicitableRelationTestCases() {
         return DataProvider.generateRelationStubsForVerification(
-                CheckboxShouldBeSelectedRule.KEYWORD, aptStepTexts);
+                CheckboxShouldBeSelectedRule.SELENIUM_KEYWORD, aptStepTexts);
     }
 
     private static Stream<Arguments> relationWithInaptStepTypeTestCases() {
@@ -76,11 +76,11 @@ public class CheckboxShouldBeSelectedRuleTest extends AbstractElementRuleTest {
 
     private static Stream<Arguments> relationWithIrrelevantWidgetTestCases() {
         return DataProvider.generateRelationStubsWithIrrelevantWidgetForVerification(
-                CheckboxShouldBeSelectedRule.KEYWORD);
+                CheckboxShouldBeSelectedRule.SELENIUM_KEYWORD);
     }
 
     private static Stream<Arguments> relationWithInaptStepTextTestCases() {
         return DataProvider.generateRelationStubsForVerification(
-                CheckboxShouldBeSelectedRule.KEYWORD, inaptStepTexts);
+                CheckboxShouldBeSelectedRule.SELENIUM_KEYWORD, inaptStepTexts);
     }
 }

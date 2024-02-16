@@ -43,7 +43,7 @@ public class InputTextRuleTest extends AbstractElementRuleTest {
     }
 
     private static Stream<Arguments> elicitableRelationTestCases() {
-        return DataProvider.generateRelationStubsForAction(InputTextRule.KEYWORD);
+        return DataProvider.generateRelationStubsForAction(InputTextRule.SELENIUM_KEYWORD);
     }
 
     private static Stream<Arguments> relationWithInaptStepTypeTestCases() {
@@ -51,6 +51,6 @@ public class InputTextRuleTest extends AbstractElementRuleTest {
     }
 
     private static Stream<Arguments> relationWithIrrelevantWidgetTestCases() {
-        return DataProvider.generateRelationStubsWithIrrelevantWidgetForAction(InputTextRule.KEYWORD);
+        return DataProvider.generateRelationStubsWithIrrelevantWidgetForAction(InputTextRule.SELENIUM_KEYWORD);
     }
 }

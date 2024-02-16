@@ -65,7 +65,7 @@ public class ElementShouldBeEnabledRuleTest extends AbstractElementRuleTest {
 
     private static Stream<Arguments> elicitableRelationTestCases() {
         return DataProvider.generateRelationStubsForVerification(
-                ElementShouldBeEnabledRule.KEYWORD, aptStepTexts);
+                ElementShouldBeEnabledRule.SELENIUM_KEYWORD, aptStepTexts);
     }
 
     private static Stream<Arguments> relationWithInaptStepTypeTestCases() {
@@ -74,11 +74,11 @@ public class ElementShouldBeEnabledRuleTest extends AbstractElementRuleTest {
 
     private static Stream<Arguments> relationWithIrrelevantWidgetTestCases() {
         return DataProvider.generateRelationStubsWithIrrelevantWidgetForVerification(
-                ElementShouldBeEnabledRule.KEYWORD);
+                ElementShouldBeEnabledRule.SELENIUM_KEYWORD);
     }
 
     private static Stream<Arguments> relationWithInaptStepTextTestCases() {
         return DataProvider.generateRelationStubsForVerification(
-                ElementShouldBeEnabledRule.KEYWORD, inaptStepTexts);
+                ElementShouldBeEnabledRule.SELENIUM_KEYWORD, inaptStepTexts);
     }
 }

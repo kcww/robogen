@@ -1,15 +1,15 @@
 package net.kcww.app.robogen.composer.service.impl.robot;
 
-import net.kcww.app.robogen.composer.model.ComposingMaterialModel;
-import net.kcww.app.robogen.composer.model.RobotEnum;
-import net.kcww.app.robogen.translator.model.selenium.SeleniumKeywordEnum;
+import net.kcww.app.robogen.composer.model.RobotScript;
+import net.kcww.app.robogen.composer.helper.RobotScriptEnum;
+import net.kcww.app.robogen.translator.helper.SeleniumKeywordEnum;
 
-import static net.kcww.app.robogen.composer.helper.Composers.*;
+import static net.kcww.app.robogen.composer.helper.RobotScripts.*;
 
-public class KeywordSectionComposer extends AbstractComposer {
+public class KeywordSectionWriter extends AbstractScriptSectionWriter {
 
     @Override
-    public String compose(ComposingMaterialModel model) {
+    public String write(RobotScript model) {
         header();                 // *** Keywords ***
         startWebTestKeyword();    // Start Web Test
         newline();
@@ -21,7 +21,7 @@ public class KeywordSectionComposer extends AbstractComposer {
     }
 
     private void header() {
-        newlineAppend(RobotEnum.KEYWORDS_SECTION.getKeyword());
+        newlineAppend(RobotScriptEnum.KEYWORDS_SECTION.getKeyword());
     }
 
     private void startWebTestKeyword() {
@@ -39,13 +39,14 @@ public class KeywordSectionComposer extends AbstractComposer {
         closeBrowser();             //    Close Browser
     }
 
-    private void userKeyword(ComposingMaterialModel model) {
+    private void userKeyword(RobotScript model) {
         newlineAppend(model.getScenarioName()); // <User Keyword>
-        var arguments = extractArguments(model.getKeywordModels());
+
+        var arguments = extractArguments(model.getKeywords());
         if (!arguments.isEmpty()) {             //    [Arguments]    ${ARG1}    ${ARG2}    ${ARG3}    ...
-            newlineIndentedAppend(RobotEnum.ARGUMENTS.getKeyword()).indentedAppend(String.join(INDENT, arguments));
+            newlineIndentedAppend(RobotScriptEnum.ARGUMENTS.getKeyword()).indentedAppend(String.join(INDENT, arguments));
         }                                       //    <Test Step>
-        formatTestSteps(model.getKeywordModels()).forEach(this::newlineIndentedAppend);
+        formatTestSteps(model.getKeywords()).forEach(this::newlineIndentedAppend);
     }
 
     private void startWebTest() {

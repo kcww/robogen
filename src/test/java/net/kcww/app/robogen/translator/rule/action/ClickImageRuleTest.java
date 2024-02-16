@@ -43,7 +43,7 @@ public class ClickImageRuleTest extends AbstractElementRuleTest {
     }
 
     private static Stream<Arguments> elicitableRelationTestCases() {
-        return DataProvider.generateRelationStubsForAction(ClickImageRule.KEYWORD);
+        return DataProvider.generateRelationStubsForAction(ClickImageRule.SELENIUM_KEYWORD);
     }
 
     private static Stream<Arguments> relationWithInaptStepTypeTestCases() {
@@ -51,6 +51,6 @@ public class ClickImageRuleTest extends AbstractElementRuleTest {
     }
 
     private static Stream<Arguments> relationWithIrrelevantWidgetTestCases() {
-        return DataProvider.generateRelationStubsWithIrrelevantWidgetForAction(ClickImageRule.KEYWORD);
+        return DataProvider.generateRelationStubsWithIrrelevantWidgetForAction(ClickImageRule.SELENIUM_KEYWORD);
     }
 }

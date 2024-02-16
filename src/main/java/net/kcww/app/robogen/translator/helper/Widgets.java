@@ -2,10 +2,8 @@ package net.kcww.app.robogen.translator.helper;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-import net.kcww.app.robogen.translator.model.selenium.SeleniumKeyword;
-import net.kcww.app.robogen.translator.model.selenium.SeleniumKeywordEnum;
-import net.kcww.app.robogen.translator.model.widget.Widget;
-import net.kcww.app.robogen.translator.model.widget.WidgetEnum;
+import net.kcww.app.robogen.translator.model.SeleniumKeyword;
+import net.kcww.app.robogen.translator.model.Widget;
 
 import java.util.*;
 import java.util.function.Function;
@@ -58,61 +56,51 @@ public final class Widgets {
                 SeleniumKeywordEnum.ELEMENT_SHOULD_NOT_BE_VISIBLE,
                 SeleniumKeywordEnum.WAIT_UNTIL_ELEMENT_IS_ENABLED,
                 SeleniumKeywordEnum.WAIT_UNTIL_ELEMENT_IS_VISIBLE,
-                SeleniumKeywordEnum.WAIT_UNTIL_ELEMENT_IS_NOT_VISIBLE,
-                SeleniumKeywordEnum.WAIT_UNTIL_ELEMENT_CONTAINS);
+                SeleniumKeywordEnum.WAIT_UNTIL_ELEMENT_IS_NOT_VISIBLE);
     }
 
     private static EnumSet<SeleniumKeywordEnum> getSpecificKeywordsForWidgetType(Widget.Type widgetType) {
         var keywords = EnumSet.noneOf(SeleniumKeywordEnum.class);
         switch (widgetType) {
-            case BUTTON:
-                keywords.add(SeleniumKeywordEnum.CLICK_BUTTON);
-                break;
-            case CHECKBOX:
+            case BUTTON, RESET, SUBMIT -> keywords.add(SeleniumKeywordEnum.CLICK_BUTTON);
+            case CHECKBOX -> {
                 keywords.add(SeleniumKeywordEnum.SELECT_CHECKBOX);
                 keywords.add(SeleniumKeywordEnum.UNSELECT_CHECKBOX);
                 keywords.add(SeleniumKeywordEnum.CHECK_BOX_SHOULD_BE_SELECTED);
                 keywords.add(SeleniumKeywordEnum.CHECK_BOX_SHOULD_NOT_BE_SELECTED);
-                break;
-            case FILE_UPLOAD:
+            }
+            case FILE -> {
                 keywords.add(SeleniumKeywordEnum.CHOOSE_FILE);
-                break;
-            case IMAGE:
-                keywords.add(SeleniumKeywordEnum.CLICK_IMAGE);
-                break;
-            case LINK:
-                keywords.add(SeleniumKeywordEnum.CLICK_LINK);
-                break;
-            case LIST:
+                keywords.add(SeleniumKeywordEnum.WAIT_UNTIL_ELEMENT_CONTAINS);}
+            case IMAGE -> keywords.add(SeleniumKeywordEnum.CLICK_IMAGE);
+            case LINK -> keywords.add(SeleniumKeywordEnum.CLICK_LINK);
+            case SELECT -> {
                 keywords.add(SeleniumKeywordEnum.SELECT_FROM_LIST_BY_LABEL);
                 keywords.add(SeleniumKeywordEnum.UNSELECT_FROM_LIST_BY_LABEL);
                 keywords.add(SeleniumKeywordEnum.SELECT_ALL_FROM_LIST);
                 keywords.add(SeleniumKeywordEnum.UNSELECT_ALL_FROM_LIST);
                 keywords.add(SeleniumKeywordEnum.LIST_SELECTION_SHOULD_BE);
                 keywords.add(SeleniumKeywordEnum.LIST_SHOULD_HAVE_NO_SELECTIONS);
-                break;
-            case PASSWORD:
+            }
+            case PASSWORD -> {
                 keywords.add(SeleniumKeywordEnum.INPUT_PASSWORD);
                 keywords.add(SeleniumKeywordEnum.WAIT_UNTIL_ELEMENT_CONTAINS);
-                break;
-            case RADIO:
+            }
+            case RADIO -> {
                 keywords.add(SeleniumKeywordEnum.SELECT_RADIO_BUTTON);
                 keywords.add(SeleniumKeywordEnum.RADIO_BUTTON_SHOULD_BE_SET_TO);
                 keywords.add(SeleniumKeywordEnum.RADIO_BUTTON_SHOULD_NOT_BE_SELECTED);
-                keywords.add(SeleniumKeywordEnum.WAIT_UNTIL_ELEMENT_CONTAINS);
-                break;
-            case TEXT:
+            }
+            case TEXT, DATE, NUMBER -> {
                 keywords.add(SeleniumKeywordEnum.INPUT_TEXT);
                 keywords.add(SeleniumKeywordEnum.TEXTFIELD_SHOULD_CONTAIN);
                 keywords.add(SeleniumKeywordEnum.WAIT_UNTIL_ELEMENT_CONTAINS);
-                break;
-            case TEXT_AREA:
+            }
+            case TEXTAREA -> {
                 keywords.add(SeleniumKeywordEnum.INPUT_TEXT);
                 keywords.add(SeleniumKeywordEnum.TEXTAREA_SHOULD_CONTAIN);
                 keywords.add(SeleniumKeywordEnum.WAIT_UNTIL_ELEMENT_CONTAINS);
-                break;
-            default:
-                break;
+            }
         }
         return keywords;
     }

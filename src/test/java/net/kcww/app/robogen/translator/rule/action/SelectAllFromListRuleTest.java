@@ -65,7 +65,7 @@ public class SelectAllFromListRuleTest extends AbstractElementRuleTest {
 
     private static Stream<Arguments> elicitableRelationTestCases() {
         return DataProvider.generateRelationStubsForAction(
-                SelectAllFromListRule.KEYWORD, aptStepTexts);
+                SelectAllFromListRule.SELENIUM_KEYWORD, aptStepTexts);
     }
 
     private static Stream<Arguments> relationWithInaptStepTypeTestCases() {
@@ -74,11 +74,11 @@ public class SelectAllFromListRuleTest extends AbstractElementRuleTest {
 
     private static Stream<Arguments> relationWithIrrelevantWidgetTestCases() {
         return DataProvider.generateRelationStubsWithIrrelevantWidgetForAction(
-                SelectAllFromListRule.KEYWORD);
+                SelectAllFromListRule.SELENIUM_KEYWORD);
     }
 
     private static Stream<Arguments> relationWithInaptStepTextTestCases() {
         return DataProvider.generateRelationStubsForAction(
-                SelectAllFromListRule.KEYWORD, inaptStepTexts);
+                SelectAllFromListRule.SELENIUM_KEYWORD, inaptStepTexts);
     }
 }

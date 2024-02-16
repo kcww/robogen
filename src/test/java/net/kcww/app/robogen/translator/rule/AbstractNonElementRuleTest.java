@@ -1,10 +1,10 @@
 package net.kcww.app.robogen.translator.rule;
 
-import net.kcww.app.robogen.mapper.model.RelationModel;
-import net.kcww.app.robogen.parser.model.ScenarioStepModel;
-import net.kcww.app.robogen.parser.model.XmlElementModel;
+import net.kcww.app.robogen.mapper.model.StepRelation;
+import net.kcww.app.robogen.parser.model.ParsedStep;
+import net.kcww.app.robogen.parser.model.XmlElement;
 import net.kcww.app.robogen.translator.helper.RelationModelStub;
-import net.kcww.app.robogen.translator.model.KeywordModel;
+import net.kcww.app.robogen.translator.model.Keyword;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -16,23 +16,23 @@ import static org.mockito.Mockito.*;
 public class AbstractNonElementRuleTest {
 
     @Mock
-    private RelationModel mockRelation;
+    private StepRelation mockRelation;
     @Mock
-    private ScenarioStepModel mockScenarioStep;
+    private ParsedStep mockParsedStep;
     @Mock
-    private XmlElementModel mockXmlElement;
+    private XmlElement mockXmlElement;
 
-    protected void runTest(KeywordRule<RelationModel, KeywordModel> rule, RelationModelStub relationStub,
+    protected void runTest(KeywordRule<StepRelation, Keyword> rule, RelationModelStub relationStub,
                            boolean expectedResult) {
         runTest(rule, relationStub, expectedResult, false);
     }
 
-    protected void runTestWithStepParameters(KeywordRule<RelationModel, KeywordModel> rule,
+    protected void runTestWithStepParameters(KeywordRule<StepRelation, Keyword> rule,
                                              RelationModelStub relationStub, boolean expectedResult) {
         runTest(rule, relationStub, expectedResult, true);
     }
 
-    private void runTest(KeywordRule<RelationModel, KeywordModel> rule, RelationModelStub relationStub,
+    private void runTest(KeywordRule<StepRelation, Keyword> rule, RelationModelStub relationStub,
                          boolean expectedResult, boolean withStepParameters) {
         setupMocks(relationStub, withStepParameters);
 
@@ -46,16 +46,16 @@ public class AbstractNonElementRuleTest {
         if (relationStub.tagName() != null) {
             when(mockRelation.xmlElement()).thenReturn(mockXmlElement);
         } else {
-            when(mockRelation.scenarioStep()).thenReturn(mockScenarioStep);
-            when(mockScenarioStep.type()).thenReturn(relationStub.stepType());
+            when(mockRelation.parsedStep()).thenReturn(mockParsedStep);
+            when(mockParsedStep.type()).thenReturn(relationStub.stepType());
 
             if (withStepParameters && relationStub.stepParameters() != null && !relationStub.stepParameters().isEmpty()) {
-                when(mockScenarioStep.parameters()).thenReturn(relationStub.stepParameters());
-                when(mockScenarioStep.text()).thenReturn(relationStub.stepText());
+                when(mockParsedStep.parameters()).thenReturn(relationStub.stepParameters());
+                when(mockParsedStep.text()).thenReturn(relationStub.stepText());
             }
 
             if (!withStepParameters && relationStub.stepText() != null) {
-                when(mockScenarioStep.text()).thenReturn(relationStub.stepText());
+                when(mockParsedStep.text()).thenReturn(relationStub.stepText());
             }
         }
     }
@@ -63,18 +63,18 @@ public class AbstractNonElementRuleTest {
     private void verifyInteractions(RelationModelStub relationStub, boolean withStepParameters) {
         verify(mockRelation, atLeastOnce()).xmlElement();
         if (relationStub.tagName() != null) {
-            verify(mockScenarioStep, never()).type();
-            verify(mockScenarioStep, never()).text();
+            verify(mockParsedStep, never()).type();
+            verify(mockParsedStep, never()).text();
         } else {
-            verify(mockScenarioStep, atLeastOnce()).type();
+            verify(mockParsedStep, atLeastOnce()).type();
 
             if (withStepParameters && relationStub.stepParameters() != null && !relationStub.stepParameters().isEmpty()) {
-                verify(mockScenarioStep).parameters();
-                verify(mockScenarioStep).text();
+                verify(mockParsedStep).parameters();
+                verify(mockParsedStep).text();
             }
 
             if (!withStepParameters && relationStub.stepText() != null) {
-                verify(mockScenarioStep, relationStub.stepText() != null ? atLeastOnce() : never()).text();
+                verify(mockParsedStep, relationStub.stepText() != null ? atLeastOnce() : never()).text();
             }
         }
     }

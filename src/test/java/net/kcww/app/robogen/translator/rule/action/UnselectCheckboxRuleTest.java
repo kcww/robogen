@@ -67,7 +67,7 @@ class UnselectCheckboxRuleTest extends AbstractElementRuleTest {
 
     private static Stream<Arguments> elicitableRelationTestCases() {
         return DataProvider.generateRelationStubsForAction(
-                UnselectCheckboxRule.KEYWORD, aptStepTexts);
+                UnselectCheckboxRule.SELENIUM_KEYWORD, aptStepTexts);
     }
 
     private static Stream<Arguments> relationWithInaptStepTypeTestCases() {
@@ -76,11 +76,11 @@ class UnselectCheckboxRuleTest extends AbstractElementRuleTest {
 
     private static Stream<Arguments> relationWithIrrelevantWidgetTestCases() {
         return DataProvider.generateRelationStubsWithIrrelevantWidgetForAction(
-                UnselectCheckboxRule.KEYWORD);
+                UnselectCheckboxRule.SELENIUM_KEYWORD);
     }
 
     private static Stream<Arguments> relationWithInaptStepTextTestCases() {
         return DataProvider.generateRelationStubsForAction(
-                UnselectCheckboxRule.KEYWORD, inaptStepTexts);
+                UnselectCheckboxRule.SELENIUM_KEYWORD, inaptStepTexts);
     }
 }
